@@ -21,13 +21,30 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      child: Center(child: AppIconWidget(image: 'assets/icons/ic_appicon.png')),
-    );
+        color: Colors.lightBlue,
+        child: Column(children: <Widget>[
+          AppIconWidget(image: 'assets/icons/ic_appicon.png'),
+          RaisedButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed(Routes.signup);
+              },
+              child: Text('Get Started !')),
+          Text('Already a member ?'),
+          InkWell(
+            child: Text(
+              ' Log In',
+              style: TextStyle(decoration: TextDecoration.underline),
+            ),
+            onTap: () {
+              Navigator.pushNamed(context, Routes.login);
+            },
+          )
+        ]));
   }
 
   startTimer() {
     var _duration = Duration(milliseconds: 5000);
-    return Timer(_duration, navigate);
+    // return Timer(_duration, navigate);
   }
 
   navigate() async {
@@ -36,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (preferences.getBool(Preferences.is_logged_in) ?? false) {
       Navigator.of(context).pushReplacementNamed(Routes.home);
     } else {
-      Navigator.of(context).pushReplacementNamed(Routes.login);
+      Navigator.of(context).pushReplacementNamed(Routes.signup);
     }
   }
 }

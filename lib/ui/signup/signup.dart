@@ -13,20 +13,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 
 import '../../stores/theme/theme_store.dart';
 
-class LoginScreen extends StatefulWidget {
+class SignupScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _SignupScreenState createState() => _SignupScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignupScreenState extends State<SignupScreen> {
   //text controllers:-----------------------------------------------------------
-  TextEditingController _userEmailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
   TextEditingController _phoneNumberController = TextEditingController();
-
+  TextEditingController _fullNameController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _userEmailController = TextEditingController();
   //stores:---------------------------------------------------------------------
   ThemeStore _themeStore;
 
@@ -55,16 +56,18 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      primary: true,
-      appBar: EmptyAppBar(),
-      body: _buildBody(),
-    );
+    return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          primary: true,
+          appBar: EmptyAppBar(),
+          body: _buildBody(),
+        ));
   }
 
-  // body methods:--------------------------------------------------------------
   Widget _buildBody() {
-    return Material(
+    return SingleChildScrollView(
+        child: Material(
       child: Stack(
         children: <Widget>[
           MediaQuery.of(context).orientation == Orientation.landscape
@@ -98,7 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
           )
         ],
       ),
-    );
+    ));
   }
 
   Widget _buildLeftSide() {
@@ -112,39 +115,67 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildRightSide() {
     return Form(
-      key: _formKey,
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              AppIconWidget(image: 'assets/icons/ic_appicon.png'),
-              TabBar(tabs: <Widget>[Text('Using Email'), Text('Using Phone')]),
-              SizedBox(height: 24.0),
-              TabBarView(children: <Widget>[
-                _buildEmailIdField(),
-                _buildPhoneNumberField()
-              ]),
-              _buildPasswordField(),
-              _buildForgotPasswordButton(),
-              _buildSignInButton()
-            ],
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  AppIconWidget(image: 'assets/icons/ic_appicon.png'),
+                  TabBar(
+                    labelColor: Colors.blueGrey,
+                    tabs: <Widget>[
+                      Tab(text: 'Using Email'),
+                      Tab(text: 'Using Phone')
+                    ],
+                  ),
+                  Container(
+                      height: 600,
+                      child: TabBarView(
+                        children: <Widget>[
+                          SizedBox(
+                              height: 500,
+                              width: 300,
+                              child: Column(
+                                children: <Widget>[
+                                  _buildFullNameField(),
+                                  _buildEmailIdField(),
+                                  _buildPasswordField(),
+                                  _buildSignUpButton(),
+                                  _googleButton(),
+                                  _facebookButton()
+                                ],
+                              )),
+                          SizedBox(
+                              height: 500,
+                              width: 300,
+                              child: Column(
+                                children: <Widget>[
+                                  _buildFullNameField(),
+                                  _buildPhoneNumberField(),
+                                  _buildPasswordField(),
+                                  _buildSignUpButton(),
+                                  _googleButton(),
+                                  _facebookButton()
+                                ],
+                              ))
+                        ],
+                      )),
+                ]),
           ),
-        ),
-      ),
-    );
+        ));
   }
 
   Widget _buildEmailIdField() {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint: AppLocalizations.of(context).translate('login_et_user_email'),
+          hint: AppLocalizations.of(context).translate('signup_et_user_email'),
           inputType: TextInputType.emailAddress,
-          icon: Icons.person,
+          icon: Icons.email,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
           textController: _userEmailController,
           inputAction: TextInputAction.next,
@@ -158,6 +189,69 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       },
     );
+  }
+
+  Widget _buildFullNameField() {
+    return Observer(
+      builder: (context) {
+        return TextFieldWidget(
+          hint: AppLocalizations.of(context).translate('signup_et_full_name'),
+          inputType: TextInputType.text,
+          icon: Icons.person,
+          iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
+          textController: _fullNameController,
+          inputAction: TextInputAction.next,
+          onChanged: (value) {
+            _store.setUserId(_userEmailController.text);
+          },
+          onFieldSubmitted: (value) {
+            FocusScope.of(context).requestFocus(_passwordFocusNode);
+          },
+          errorText: _store.formErrorStore.fullName,
+        );
+      },
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return Observer(
+      builder: (context) {
+        return TextFieldWidget(
+          hint:
+              AppLocalizations.of(context).translate('signup_et_user_password'),
+          isObscure: true,
+          padding: EdgeInsets.only(top: 16.0),
+          icon: Icons.lock,
+          iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
+          textController: _passwordController,
+          focusNode: _passwordFocusNode,
+          errorText: _store.formErrorStore.password,
+          onChanged: (value) {
+            _store.setPassword(_passwordController.text);
+          },
+        );
+      },
+    );
+  }
+
+  Widget _googleButton() {
+    return Flexible(
+        flex: 1,
+        child: GoogleSignInButton(
+          onPressed: () {
+            //google api
+          },
+        ));
+  }
+
+  Widget _facebookButton() {
+    return Flexible(
+        flex: 1,
+        child: FacebookSignInButton(
+          onPressed: () {
+            //facebook api
+          },
+        ));
   }
 
   Widget _buildPhoneNumberField() {
@@ -180,34 +274,13 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildPasswordField() {
-    return Observer(
-      builder: (context) {
-        return TextFieldWidget(
-          hint:
-              AppLocalizations.of(context).translate('login_et_user_password'),
-          isObscure: true,
-          padding: EdgeInsets.only(top: 16.0),
-          icon: Icons.lock,
-          iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
-          textController: _passwordController,
-          focusNode: _passwordFocusNode,
-          errorText: _store.formErrorStore.password,
-          onChanged: (value) {
-            _store.setPassword(_passwordController.text);
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildForgotPasswordButton() {
+  Widget _buildLogin() {
     return Align(
       alignment: FractionalOffset.centerRight,
       child: FlatButton(
         padding: EdgeInsets.all(0.0),
         child: Text(
-          AppLocalizations.of(context).translate('login_btn_forgot_password'),
+          AppLocalizations.of(context).translate('login_btn_login'),
           style: Theme.of(context)
               .textTheme
               .caption
@@ -218,21 +291,36 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildSignInButton() {
+  Widget _buildSignUpButton() {
     return RoundedButtonWidget(
       buttonText: AppLocalizations.of(context).translate('login_btn_sign_in'),
       buttonColor: Colors.orangeAccent,
       textColor: Colors.white,
       onPressed: () async {
-        /*if (_store.canLogin) {
+        /*if (_store.canRegister) {
           DeviceUtils.hideKeyboard(context);
-          _store.login();
+          _store.register();
         } else {
           _showErrorMessage('Please fill in all fields');
         }*/
         Navigator.pop(context);
       },
     );
+  }
+
+  //General Methods
+  _showErrorMessage(String message) {
+    Future.delayed(Duration(milliseconds: 0), () {
+      if (message != null && message.isNotEmpty) {
+        FlushbarHelper.createError(
+          message: message,
+          title: AppLocalizations.of(context).translate('home_tv_error'),
+          duration: Duration(seconds: 3),
+        )..show(context);
+      }
+    });
+
+    return SizedBox.shrink();
   }
 
   Widget navigate(BuildContext context) {
@@ -248,21 +336,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container();
   }
 
-  // General Methods:-----------------------------------------------------------
-  _showErrorMessage(String message) {
-    Future.delayed(Duration(milliseconds: 0), () {
-      if (message != null && message.isNotEmpty) {
-        FlushbarHelper.createError(
-          message: message,
-          title: AppLocalizations.of(context).translate('home_tv_error'),
-          duration: Duration(seconds: 3),
-        )..show(context);
-      }
-    });
-
-    return SizedBox.shrink();
-  }
-
   // dispose:-------------------------------------------------------------------
   @override
   void dispose() {
@@ -270,6 +343,8 @@ class _LoginScreenState extends State<LoginScreen> {
     _userEmailController.dispose();
     _passwordController.dispose();
     _passwordFocusNode.dispose();
+    _phoneNumberController.dispose();
+    _fullNameController.dispose();
     super.dispose();
   }
 }

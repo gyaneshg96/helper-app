@@ -56,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return AppBar(
       title: Text(AppLocalizations.of(context).translate('home_tv_posts')),
       actions: _buildActions(context),
+      leading: _buildDropDown(context),
     );
   }
 
@@ -65,6 +66,16 @@ class _HomeScreenState extends State<HomeScreen> {
       _buildThemeButton(),
       _buildLogoutButton(),
     ];
+  }
+
+  //making dropdown menu from dropdown
+  Widget _buildDropDown(BuildContext context) {
+    return DropdownButton<String>(
+      icon: Icon(Icons.book),
+      onChanged: (String option) {
+        //goto the option
+      },
+    );
   }
 
   Widget _buildThemeButton() {

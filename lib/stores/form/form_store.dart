@@ -23,8 +23,9 @@ abstract class _FormStore with Store {
   void _setupValidations() {
     _disposers = [
       reaction((_) => userEmail, validateUserEmail),
+      reaction((_) => fullName, validateFullName),
       reaction((_) => password, validatePassword),
-      reaction((_) => confirmPassword, validateConfirmPassword)
+      reaction((_) => phoneNumber, validatePhoneNumber),
     ];
   }
 
@@ -36,24 +37,30 @@ abstract class _FormStore with Store {
   String password = '';
 
   @observable
-  String confirmPassword = '';
-
-  @observable
   bool success = false;
 
   @observable
   bool loading = false;
 
+  @observable
+  String fullName = '';
+
+  @observable
+  String phoneNumber = '';
+
   @computed
   bool get canLogin =>
-      !formErrorStore.hasErrorsInLogin && userEmail.isNotEmpty && password.isNotEmpty;
+      !formErrorStore.hasErrorsInLogin &&
+      userEmail.isNotEmpty &&
+      password.isNotEmpty;
 
   @computed
   bool get canRegister =>
       !formErrorStore.hasErrorsInRegister &&
       userEmail.isNotEmpty &&
       password.isNotEmpty &&
-      confirmPassword.isNotEmpty;
+      fullName.isNotEmpty &&
+      phoneNumber.isNotEmpty;
 
   @computed
   bool get canForgetPassword =>
@@ -71,8 +78,13 @@ abstract class _FormStore with Store {
   }
 
   @action
-  void setConfirmPassword(String value) {
-    confirmPassword = value;
+  void setFullName(String value) {
+    fullName = value;
+  }
+
+  @action
+  void setPhoneNumber(String value) {
+    phoneNumber = value;
   }
 
   @action
@@ -83,6 +95,15 @@ abstract class _FormStore with Store {
       formErrorStore.userEmail = 'Please enter a valid email address';
     } else {
       formErrorStore.userEmail = null;
+    }
+  }
+
+  @action
+  void validateFullName(String value) {
+    if (value.isEmpty) {
+      formErrorStore.fullName = "Full Name cannot be empty";
+    } else {
+      formErrorStore.fullName = null;
     }
   }
 
@@ -98,13 +119,13 @@ abstract class _FormStore with Store {
   }
 
   @action
-  void validateConfirmPassword(String value) {
+  void validatePhoneNumber(String value) {
     if (value.isEmpty) {
-      formErrorStore.confirmPassword = "Confirm password can't be empty";
-    } else if (value != password) {
-      formErrorStore.confirmPassword = "Password doen't match";
+      formErrorStore.fullName = "Phone Number cannot be empty";
+    } else if (isPhoneNumber(value)) {
+      formErrorStore.fullName = "Invalid Phone Number";
     } else {
-      formErrorStore.confirmPassword = null;
+      formErrorStore.fullName = null;
     }
   }
 
@@ -147,9 +168,15 @@ abstract class _FormStore with Store {
     }
   }
 
+  bool isPhoneNumber(String value) {
+    return (value.length == 10) && (isNumeric(value));
+  }
+
   void validateAll() {
     validatePassword(password);
     validateUserEmail(userEmail);
+    validateFullName(fullName);
+    validatePhoneNumber(phoneNumber);
   }
 }
 
@@ -165,12 +192,22 @@ abstract class _FormErrorStore with Store {
   @observable
   String confirmPassword;
 
+  @observable
+  String phoneNumber;
+
+  @observable
+  String fullName;
+
   @computed
   bool get hasErrorsInLogin => userEmail != null || password != null;
 
   @computed
   bool get hasErrorsInRegister =>
-      userEmail != null || password != null || confirmPassword != null;
+      userEmail != null ||
+      password != null ||
+      confirmPassword != null ||
+      fullName != null ||
+      phoneNumber != null;
 
   @computed
   bool get hasErrorInForgotPassword => userEmail != null;
