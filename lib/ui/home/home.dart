@@ -61,17 +61,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   List<Widget> _buildActions(BuildContext context) {
-    return <Widget>[
-      _buildLanguageButton(),
-      _buildThemeButton(),
-      _buildLogoutButton(),
-    ];
+    return <Widget>[_buildLogoutButton(), _buildSOSButton()];
   }
 
   //making dropdown menu from dropdown
   Widget _buildDropDown(BuildContext context) {
     return DropdownButton<String>(
-      icon: Icon(Icons.book),
+      icon: Icon(Icons.menu),
       onChanged: (String option) {
         //goto the option
       },
@@ -88,6 +84,19 @@ class _HomeScreenState extends State<HomeScreen> {
           icon: Icon(
             _themeStore.darkMode ? Icons.brightness_5 : Icons.brightness_3,
           ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSOSButton() {
+    return Observer(
+      builder: (context) {
+        return IconButton(
+          onPressed: () {
+            _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
+          },
+          icon: Icon(Icons.help),
         );
       },
     );

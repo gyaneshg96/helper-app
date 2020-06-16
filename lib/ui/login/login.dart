@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_auth_buttons/flutter_auth_buttons.dart';
 
 import '../../stores/theme/theme_store.dart';
 
@@ -55,11 +56,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      primary: true,
-      appBar: EmptyAppBar(),
-      body: _buildBody(),
-    );
+    return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          primary: true,
+          appBar: EmptyAppBar(),
+          body: _buildBody(),
+        ));
   }
 
   // body methods:--------------------------------------------------------------
@@ -112,30 +115,72 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildRightSide() {
     return Form(
-      key: _formKey,
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              AppIconWidget(image: 'assets/icons/ic_appicon.png'),
-              TabBar(tabs: <Widget>[Text('Using Email'), Text('Using Phone')]),
-              SizedBox(height: 24.0),
-              TabBarView(children: <Widget>[
-                _buildEmailIdField(),
-                _buildPhoneNumberField()
-              ]),
-              _buildPasswordField(),
-              _buildForgotPasswordButton(),
-              _buildSignInButton()
-            ],
+        key: _formKey,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                AppIconWidget(image: 'assets/icons/ic_appicon.png'),
+                TabBar(
+                    tabs: <Widget>[Text('Using Email'), Text('Using Phone')]),
+                Container(
+                    height: 600,
+                    child: TabBarView(
+                      children: <Widget>[
+                        SizedBox(
+                            height: 500,
+                            width: 300,
+                            child: Column(
+                              children: <Widget>[
+                                _buildEmailIdField(),
+                                _buildPasswordField(),
+                                _buildSignInButton(),
+                                _googleButton(),
+                                _facebookButton()
+                              ],
+                            )),
+                        SizedBox(
+                            height: 500,
+                            width: 300,
+                            child: Column(
+                              children: <Widget>[
+                                _buildPhoneNumberField(),
+                                _buildPasswordField(),
+                                _buildSignInButton(),
+                                _googleButton(),
+                                _facebookButton()
+                              ],
+                            ))
+                      ],
+                    )),
+              ],
+            ),
           ),
-        ),
-      ),
-    );
+        ));
+  }
+
+  Widget _googleButton() {
+    return Flexible(
+        flex: 1,
+        child: GoogleSignInButton(
+          onPressed: () {
+            //google api
+          },
+        ));
+  }
+
+  Widget _facebookButton() {
+    return Flexible(
+        flex: 1,
+        child: FacebookSignInButton(
+          onPressed: () {
+            //facebook api
+          },
+        ));
   }
 
   Widget _buildEmailIdField() {
@@ -230,7 +275,8 @@ class _LoginScreenState extends State<LoginScreen> {
         } else {
           _showErrorMessage('Please fill in all fields');
         }*/
-        Navigator.pop(context);
+        // Navigator.pop(context);
+        Navigator.pushNamed(context, Routes.home);
       },
     );
   }

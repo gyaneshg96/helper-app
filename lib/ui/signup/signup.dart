@@ -132,6 +132,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       Tab(text: 'Using Phone')
                     ],
                   ),
+                  _buildFullNameField(),
                   Container(
                       height: 600,
                       child: TabBarView(
@@ -141,7 +142,6 @@ class _SignupScreenState extends State<SignupScreen> {
                               width: 300,
                               child: Column(
                                 children: <Widget>[
-                                  _buildFullNameField(),
                                   _buildEmailIdField(),
                                   _buildPasswordField(),
                                   _buildSignUpButton(),
@@ -154,7 +154,6 @@ class _SignupScreenState extends State<SignupScreen> {
                               width: 300,
                               child: Column(
                                 children: <Widget>[
-                                  _buildFullNameField(),
                                   _buildPhoneNumberField(),
                                   _buildPasswordField(),
                                   _buildSignUpButton(),
@@ -274,26 +273,9 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  Widget _buildLogin() {
-    return Align(
-      alignment: FractionalOffset.centerRight,
-      child: FlatButton(
-        padding: EdgeInsets.all(0.0),
-        child: Text(
-          AppLocalizations.of(context).translate('login_btn_login'),
-          style: Theme.of(context)
-              .textTheme
-              .caption
-              .copyWith(color: Colors.orangeAccent),
-        ),
-        onPressed: () {},
-      ),
-    );
-  }
-
   Widget _buildSignUpButton() {
     return RoundedButtonWidget(
-      buttonText: AppLocalizations.of(context).translate('login_btn_sign_in'),
+      buttonText: AppLocalizations.of(context).translate("signup_btn_sign_up"),
       buttonColor: Colors.orangeAccent,
       textColor: Colors.white,
       onPressed: () async {
@@ -303,7 +285,8 @@ class _SignupScreenState extends State<SignupScreen> {
         } else {
           _showErrorMessage('Please fill in all fields');
         }*/
-        Navigator.pop(context);
+        //Navigator.pop(context);
+        Navigator.pushNamed(context, Routes.started);
       },
     );
   }
