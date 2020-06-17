@@ -1,17 +1,10 @@
-import 'dart:html';
-
 import 'package:boilerplate/data/models/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class HelperProfile extends StatefulWidget {
-  Helper helper;
-  bool myHelper;
   @override
-  _MaidProfileState createState() {
-    // TODO: implement createState
-    _MaidProfileState();
-  }
+  _HelperProfileState createState() => _HelperProfileState();
 }
 
 //move this somewhere else
@@ -29,9 +22,33 @@ class MyBullet extends StatelessWidget {
   }
 }
 
-class _MaidProfileState extends State<HelperProfile> {
+class _HelperProfileState extends State<HelperProfile> {
+  _HelperProfileState();
   Helper helper;
   bool myHelper = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    //will fetch username from server or cache
+
+    helper = Helper('Kantabai', '8232398123');
+    helper.services = [
+      'Washing bathroom',
+      'Utensils, mopping and trash collecting',
+      'Dusting one a month',
+      'Ironing'
+    ];
+    helper.reviews = new List();
+    helper.reviews.add(new Review("Gaand faad diya"));
+    helper.reviews.add(new Review("Gandiya faad diya"));
+    helper.reviews.add(new Review("Ghanta"));
+  }
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,7 +98,11 @@ class _MaidProfileState extends State<HelperProfile> {
       Card(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[],
+          children: <Widget>[
+            Text(helper.fullname),
+            Text(helper.phoneNumber),
+            Text('Rating : 95%')
+          ],
         ),
       )
     ]);
@@ -91,6 +112,7 @@ class _MaidProfileState extends State<HelperProfile> {
   Widget _makeServicesSection() {
     List services = helper.services;
     return Container(
+      height: 300,
       child: ListView.builder(
           itemCount: services.length,
           itemBuilder: (BuildContext context, int i) {
@@ -98,41 +120,22 @@ class _MaidProfileState extends State<HelperProfile> {
                 leading: MyBullet(), title: new Text(services[i]));
           }),
     );
-    /*return Container(
-      child: Column(children: <Widget>[
-        new ListTile(
-          leading: new MyBullet(),
-          title: new Text('Utensils, mopping and trash collecting'),
-        ),
-        new ListTile(
-          leading: new MyBullet(),
-          title: new Text('Washing bathroom'),
-      ),
-      new ListTile(
-          leading: new MyBullet(),
-          title: new Text('Dusting one a month'),
-        ),
-        new ListTile(
-          leading: new MyBullet(),
-          title: new Text('Ironing'),
-    )]));*/
   }
 
   //what time of the day available
   Widget _makeAvailability() {
-    return null;
+    return Container(height: 200, child: Text('Not available at all'));
   }
 
   Widget _makeReviewSection() {
-    List<Review> reviews = helper.reviews;
     CarouselController controller = CarouselController();
     return Column(children: <Widget>[
       CarouselSlider.builder(
-        options: CarouselOptions(height: 400),
+        options: CarouselOptions(height: 300),
         carouselController: controller,
-        itemCount: reviews.length,
+        itemCount: helper.reviews.length,
         itemBuilder: (BuildContext context, int i) {
-          return Container(child: Text(reviews[i].comment));
+          return Container(child: Text(helper.reviews[i].comment));
         },
       ),
       RaisedButton(

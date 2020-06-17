@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
 import 'package:boilerplate/data/models/common.dart';
 
 class Helper extends Person {
@@ -9,9 +8,11 @@ class Helper extends Person {
   Ratings ratings;
   List slots;
   String idproofNumber;
-  List services;
+  List<String> services;
   int currentUsers;
   int totalUsers;
+
+  Helper(String fullname, String phoneNumber) : super(fullname, phoneNumber);
 }
 
 class Review {
@@ -20,6 +21,10 @@ class Review {
   int helperId;
   String comment;
   DateTime posted;
+
+  Review(String comment) {
+    this.comment = comment;
+  }
 }
 
 class Slot {

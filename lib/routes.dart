@@ -1,3 +1,4 @@
+import 'package:boilerplate/ui/profiles/helperProfile.dart';
 import 'package:flutter/material.dart';
 
 import 'ui/home/home.dart';
@@ -24,5 +25,6 @@ class Routes {
     home: (BuildContext context) => HomeScreen(),
     signup: (BuildContext context) => SignupScreen(),
     started: (BuildContext context) => StartedScreen(),
+    helperProfile: (BuildContext context) => HelperProfile(),
   };
 }

@@ -9,4 +9,10 @@ class User extends Person {
   List savedPayments;
   List preferences;
   List pastOrder;
+
+  User(fullname, phoneNumber) : super(fullname, phoneNumber);
+
+  String getFullName() {
+    return fullname;
+  }
 }

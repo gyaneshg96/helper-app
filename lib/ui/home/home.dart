@@ -1,8 +1,11 @@
+import 'package:boilerplate/data/models/helper.dart';
+import 'package:boilerplate/data/models/user.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/routes.dart';
 import 'package:boilerplate/stores/language/language_store.dart';
 import 'package:boilerplate/stores/post/post_store.dart';
 import 'package:boilerplate/stores/theme/theme_store.dart';
+import 'package:boilerplate/ui/dropdown/dropdown.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/widgets/progress_indicator_widget.dart';
 import 'package:flushbar/flushbar_helper.dart';
@@ -23,6 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
   ThemeStore _themeStore;
   LanguageStore _languageStore;
 
+  User currentUser;
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +42,14 @@ class _HomeScreenState extends State<HomeScreen> {
     _themeStore = Provider.of<ThemeStore>(context);
     _postStore = Provider.of<PostStore>(context);
 
+    //will fetch username from server or cache
+
+    currentUser = User('Gyan', '873298229');
+    currentUser.helpers = List();
+    currentUser.helpers.add(Helper('ABC', '682322398'));
+    currentUser.helpers.add(Helper('XYZ', '283298434'));
+    currentUser.helpers.add(Helper('Bai', '323128317'));
+
     // check to see if already called api
     if (!_postStore.loading) {
       _postStore.getPosts();
@@ -45,48 +58,53 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String name = currentUser.fullname;
+    final GlobalKey _scaffoldKey = new GlobalKey();
     return Scaffold(
-      appBar: _buildAppBar(),
+      key: _scaffoldKey,
+      appBar: _buildAppBar(_scaffoldKey),
       body: _buildBody(),
+      drawer: Dropdown(name),
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.orange,
+        child: Row(
+          children: <Widget>[
+            IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  //search for a made
+                }),
+            IconButton(
+              icon: Icon(Icons.star),
+              onPressed: () {
+                //lists the marked for later helpers
+              },
+            )
+          ],
+        ),
+      ),
     );
   }
 
   // app bar methods:-----------------------------------------------------------
-  Widget _buildAppBar() {
+  Widget _buildAppBar(GlobalKey _scaffoldKey) {
     return AppBar(
       title: Text(AppLocalizations.of(context).translate('home_tv_posts')),
       actions: _buildActions(context),
-      leading: _buildDropDown(context),
+      /*leading: IconButton(
+        icon: Icon(Icons.gamepad, color: Colors.white),
+        onPressed: () => {
+          if (Scaffold.of(context).isEndDrawerOpen)
+            {Scaffold.of(context).openDrawer()}
+          else
+            {Navigator.of(context).pop()}
+        },
+      ),*/
     );
   }
 
   List<Widget> _buildActions(BuildContext context) {
     return <Widget>[_buildLogoutButton(), _buildSOSButton()];
-  }
-
-  //making dropdown menu from dropdown
-  Widget _buildDropDown(BuildContext context) {
-    return DropdownButton<String>(
-      icon: Icon(Icons.menu),
-      onChanged: (String option) {
-        //goto the option
-      },
-    );
-  }
-
-  Widget _buildThemeButton() {
-    return Observer(
-      builder: (context) {
-        return IconButton(
-          onPressed: () {
-            _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
-          },
-          icon: Icon(
-            _themeStore.darkMode ? Icons.brightness_5 : Icons.brightness_3,
-          ),
-        );
-      },
-    );
   }
 
   Widget _buildSOSButton() {
@@ -116,25 +134,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildLanguageButton() {
-    return IconButton(
-      onPressed: () {
-        _buildLanguageDialog();
-      },
-      icon: Icon(
-        Icons.language,
-      ),
-    );
-  }
-
   // body methods:--------------------------------------------------------------
   Widget _buildBody() {
-    return Stack(
-      children: <Widget>[
-        _handleErrorMessage(),
-        _buildMainContent(),
-      ],
-    );
+    return Stack(children: <Widget>[_buildMainContent()]);
   }
 
   Widget _buildMainContent() {
@@ -148,40 +150,42 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildListView() {
-    return _postStore.postList != null
+    List<Helper> currentHelpers = currentUser.helpers;
+    return currentHelpers != null
         ? ListView.separated(
-            itemCount: _postStore.postList.posts.length,
+            itemCount: currentHelpers.length,
             separatorBuilder: (context, position) {
               return Divider();
             },
             itemBuilder: (context, position) {
-              return _buildListItem(position);
+              return _buildListItem(currentHelpers[position]);
             },
           )
         : Center(
             child: Text(
-              AppLocalizations.of(context).translate('home_tv_no_post_found'),
+              AppLocalizations.of(context).translate('home_tv_no_helper_found'),
             ),
           );
   }
 
-  Widget _buildListItem(int position) {
+  Widget _buildListItem(Helper helper) {
     return ListTile(
       dense: true,
-      leading: Icon(Icons.cloud_circle),
+      leading: Icon(Icons.person_pin_circle),
+      //image of a person
       title: Text(
-        '${_postStore.postList.posts[position].title}',
+        helper.fullname,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         softWrap: false,
-        style: Theme.of(context).textTheme.title,
       ),
       subtitle: Text(
-        '${_postStore.postList.posts[position].body}',
+        helper.phoneNumber,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         softWrap: false,
       ),
+      onTap: () => {Navigator.pushNamed(context, Routes.helperProfile)},
     );
   }
 

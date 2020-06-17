@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Dropdown extends StatelessWidget {
-  final String name = "";
+  final String name;
+
+  Dropdown(this.name);
   @override
   Widget build(BuildContext context) {
     return Drawer(

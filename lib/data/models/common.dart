@@ -5,6 +5,11 @@ class Person {
   bool male;
   Address address;
   DateTime joining;
+
+  Person(String fullname, String phoneNumber) {
+    this.fullname = fullname;
+    this.phoneNumber = phoneNumber;
+  }
 }
 
 class Address {
@@ -13,7 +18,6 @@ class Address {
   String city;
   String state;
 }
-
 
 class Ratings {
   List list = new List(5);
