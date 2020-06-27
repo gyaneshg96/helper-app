@@ -1,4 +1,4 @@
-import 'package:boilerplate/data/models/helper.dart';
+import 'package:boilerplate/models/helper/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -37,7 +37,7 @@ class _HelperProfileState extends State<HelperProfile> {
     super.didChangeDependencies();
     //will fetch username from server or cache
 
-    helper = Helper('Kantabai', '8232398123');
+    /*helper = Helper('Kantabai', '8232398123');
     helper.services = [
       'Washing bathroom',
       'Utensils, mopping and trash collecting',
@@ -47,7 +47,7 @@ class _HelperProfileState extends State<HelperProfile> {
     helper.reviews = new List();
     helper.reviews.add(new Review("Gaand faad diya"));
     helper.reviews.add(new Review("Gandiya faad diya"));
-    helper.reviews.add(new Review("Ghanta"));
+    helper.reviews.add(new Review("Ghanta"));*/
   }
 
   Widget build(BuildContext context) {

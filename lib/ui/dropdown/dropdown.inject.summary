@@ -1,5 +1,5 @@
 {
-  "asset": "asset:boilerplate/lib/models/language/Language.dart",
+  "asset": "asset:boilerplate/lib/ui/dropdown/dropdown.dart",
   "summary": {
     "injector": [],
     "module": [],

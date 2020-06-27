@@ -1,0 +1,26 @@
+[
+    {
+        "fullname":"Kantabai",
+        "id":"1",
+        "male":"false",
+        "phoneNumber":"7054620713",
+        "services":["cook","maid"],
+        "areas":["BTM","JP Nagar"]
+    },
+    {
+        "fullname":"Pintu",
+        "id":"2",
+        "male":"true",
+        "phoneNumber":"7402562140",
+        "services":["cook"],
+        "areas":["Jayanagar","JP Nagar"]
+    },
+    {
+        "fullname":"Raju",
+        "id":"3",
+        "male":"true",
+        "phoneNumber":"8826305638",
+        "services":["cook","old-age"],
+        "areas":["Jayanagar","Bilekhalli"]
+    }
+]

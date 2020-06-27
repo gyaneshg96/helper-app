@@ -29,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController _phoneNumberController = TextEditingController();
 
   //stores:---------------------------------------------------------------------
-  ThemeStore _themeStore;
+  //ThemeStore _themeStore;
 
   //focus node:-----------------------------------------------------------------
   FocusNode _passwordFocusNode;
@@ -51,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    _themeStore = Provider.of<ThemeStore>(context);
+    //_themeStore = Provider.of<ThemeStore>(context);
   }
 
   @override
@@ -190,7 +190,8 @@ class _LoginScreenState extends State<LoginScreen> {
           hint: AppLocalizations.of(context).translate('login_et_user_email'),
           inputType: TextInputType.emailAddress,
           icon: Icons.person,
-          iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
+          // iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
+          iconColor: Colors.black54,
           textController: _userEmailController,
           inputAction: TextInputAction.next,
           onChanged: (value) {
@@ -214,7 +215,8 @@ class _LoginScreenState extends State<LoginScreen> {
           isObscure: true,
           padding: EdgeInsets.only(top: 16.0),
           icon: Icons.phone,
-          iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
+          // iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
+          iconColor: Colors.black54,
           textController: _phoneNumberController,
           errorText: _store.formErrorStore.phoneNumber,
           onChanged: (value) {
@@ -234,7 +236,8 @@ class _LoginScreenState extends State<LoginScreen> {
           isObscure: true,
           padding: EdgeInsets.only(top: 16.0),
           icon: Icons.lock,
-          iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
+          // iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
+          iconColor: Colors.black54,
           textController: _passwordController,
           focusNode: _passwordFocusNode,
           errorText: _store.formErrorStore.password,
@@ -269,12 +272,12 @@ class _LoginScreenState extends State<LoginScreen> {
       buttonColor: Colors.orangeAccent,
       textColor: Colors.white,
       onPressed: () async {
-        /*if (_store.canLogin) {
+        if (_store.canLogin) {
           DeviceUtils.hideKeyboard(context);
           _store.login();
         } else {
           _showErrorMessage('Please fill in all fields');
-        }*/
+        }
         // Navigator.pop(context);
         Navigator.pushNamed(context, Routes.home);
       },

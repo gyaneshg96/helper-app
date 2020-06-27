@@ -1,5 +1,5 @@
 {
-  "asset": "asset:boilerplate/lib/stores/language/language_store.dart",
+  "asset": "asset:boilerplate/lib/ui/profiles/userProfile.dart",
   "summary": {
     "injector": [],
     "module": [],

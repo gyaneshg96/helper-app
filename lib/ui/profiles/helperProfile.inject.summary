@@ -1,0 +1,8 @@
+{
+  "asset": "asset:boilerplate/lib/ui/profiles/helperProfile.dart",
+  "summary": {
+    "injector": [],
+    "module": [],
+    "injectable": []
+  }
+}

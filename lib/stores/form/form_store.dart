@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:boilerplate/models/user/user.dart';
 import 'package:boilerplate/stores/error/error_store.dart';
 import 'package:mobx/mobx.dart';
 import 'package:validators/validators.dart';
@@ -10,6 +14,8 @@ abstract class _FormStore with Store {
   // store for handling form errors
   final FormErrorStore formErrorStore = FormErrorStore();
 
+  static const String USERS_JSON='boilerplate/dummy/users.json';
+  
   // store for handling error messages
   final ErrorStore errorStore = ErrorStore();
 
@@ -138,7 +144,8 @@ abstract class _FormStore with Store {
   Future login() async {
     loading = true;
 
-    Future.delayed(Duration(milliseconds: 2000)).then((future) {
+
+    /*loginUtil().then((future) {
       loading = false;
       success = true;
     }).catchError((e) {
@@ -148,7 +155,41 @@ abstract class _FormStore with Store {
           ? "Username and password doesn't match"
           : "Something went wrong, please check your internet connection and try again";
       print(e);
-    });
+    });*/
+    loginUtil().then((future) {
+      if (future == 0){
+        success = true;
+      }
+      else if (future == 1){
+        errorStore.errorMessage = "Invalid password";
+        print(errorStore.errorMessage);
+        success = false;
+      }
+      else{
+        errorStore.errorMessage = "User don't exist";
+        print(errorStore.errorMessage);
+        success = false;
+      }
+    }).catchError((e) {
+      success = false;
+      errorStore.errorMessage = "File not present";
+      print(e);
+    }).whenComplete(() => loading = false);
+  }
+
+  Future loginUtil() async {
+    List<User> users = json.decode(await new File(USERS_JSON).readAsString());
+    for (User user in users){
+      if (user.phoneNumber == phoneNumber){
+        if(user.password == password){
+          return 0;
+        }
+        else {
+          return 1;
+        }
+      }
+    }
+    return 2;
   }
 
   @action

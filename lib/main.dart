@@ -5,7 +5,6 @@ import 'package:boilerplate/di/modules/local_module.dart';
 import 'package:boilerplate/di/modules/netwok_module.dart';
 import 'package:boilerplate/di/modules/preference_module.dart';
 import 'package:boilerplate/routes.dart';
-import 'package:boilerplate/stores/language/language_store.dart';
 import 'package:boilerplate/stores/post/post_store.dart';
 import 'package:boilerplate/stores/theme/theme_store.dart';
 import 'package:boilerplate/ui/splash/splash.dart';
@@ -44,15 +43,13 @@ class MyApp extends StatelessWidget {
   // with Hot Reload than creating it directly in the `build` function.
   final ThemeStore _themeStore = ThemeStore(appComponent.getRepository());
   final PostStore _postStore = PostStore(appComponent.getRepository());
-  final LanguageStore _languageStore = LanguageStore(appComponent.getRepository());
-
+  
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
         Provider<ThemeStore>.value(value: _themeStore),
         Provider<PostStore>.value(value: _postStore),
-        Provider<LanguageStore>.value(value: _languageStore),
       ],
       child: Observer(
         builder: (context) {
@@ -61,10 +58,6 @@ class MyApp extends StatelessWidget {
             title: Strings.appName,
             theme: _themeStore.darkMode ? themeDataDark : themeData,
             routes: Routes.routes,
-            locale: Locale(_languageStore.locale),
-            supportedLocales: _languageStore.supportedLanguages
-                .map((language) => Locale(language.locale, language.code))
-                .toList(),
             localizationsDelegates: [
               // A class which loads the translations from JSON files
               AppLocalizations.delegate,
@@ -75,13 +68,6 @@ class MyApp extends StatelessWidget {
               // Built-in localization of basic text for Cupertino widgets
               GlobalCupertinoLocalizations.delegate,
             ],
-            // Returns a locale which will be used by the app
-            localeResolutionCallback: (locale, supportedLocales) =>
-                // Check if the current device locale is supported
-                supportedLocales.firstWhere(
-                    (supportedLocale) =>
-                        supportedLocale.languageCode == locale.languageCode,
-                    orElse: () => supportedLocales.first),
             home: SplashScreen(),
           );
         },

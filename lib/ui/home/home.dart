@@ -1,18 +1,16 @@
-import 'package:boilerplate/data/models/helper.dart';
-import 'package:boilerplate/data/models/user.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
+import 'package:boilerplate/models/helper/helper.dart';
+import 'package:boilerplate/models/user/user.dart';
 import 'package:boilerplate/routes.dart';
-import 'package:boilerplate/stores/language/language_store.dart';
-import 'package:boilerplate/stores/post/post_store.dart';
-import 'package:boilerplate/stores/theme/theme_store.dart';
+import 'package:boilerplate/stores/helper/helper_store.dart';
 import 'package:boilerplate/ui/dropdown/dropdown.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/widgets/progress_indicator_widget.dart';
 import 'package:flushbar/flushbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:material_dialog/material_dialog.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -22,10 +20,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   //stores:---------------------------------------------------------------------
-  PostStore _postStore;
-  ThemeStore _themeStore;
-  LanguageStore _languageStore;
-
+  HelperStore _helperStore;
+  //ThemeStore _themeStore;
+  
   User currentUser;
 
   @override
@@ -38,21 +35,23 @@ class _HomeScreenState extends State<HomeScreen> {
     super.didChangeDependencies();
 
     // initializing stores
-    _languageStore = Provider.of<LanguageStore>(context);
-    _themeStore = Provider.of<ThemeStore>(context);
-    _postStore = Provider.of<PostStore>(context);
+
+    //no dark theme for now
+    //_themeStore = Provider.of<ThemeStore>(context);
+    
+    _helperStore = Provider.of<HelperStore>(context);
 
     //will fetch username from server or cache
 
-    currentUser = User('Gyan', '873298229');
+    /*currentUser = User('Gyan', '873298229');
     currentUser.helpers = List();
     currentUser.helpers.add(Helper('ABC', '682322398'));
     currentUser.helpers.add(Helper('XYZ', '283298434'));
-    currentUser.helpers.add(Helper('Bai', '323128317'));
+    currentUser.helpers.add(Helper('Bai', '323128317'));*/
 
     // check to see if already called api
-    if (!_postStore.loading) {
-      _postStore.getPosts();
+    if (!_helperStore.loading) {
+      _helperStore.getHelpers(currentUser);
     }
   }
 
@@ -112,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) {
         return IconButton(
           onPressed: () {
-            _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
+            launch("tel://100");
           },
           icon: Icon(Icons.help),
         );
@@ -142,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildMainContent() {
     return Observer(
       builder: (context) {
-        return _postStore.loading
+        return _helperStore.loading
             ? CustomProgressIndicatorWidget()
             : Material(child: _buildListView());
       },
@@ -192,8 +191,8 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _handleErrorMessage() {
     return Observer(
       builder: (context) {
-        if (_postStore.errorStore.errorMessage.isNotEmpty) {
-          return _showErrorMessage(_postStore.errorStore.errorMessage);
+        if (_helperStore.errorStore.errorMessage.isNotEmpty) {
+          return _showErrorMessage(_helperStore.errorStore.errorMessage);
         }
 
         return SizedBox.shrink();
@@ -216,7 +215,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return SizedBox.shrink();
   }
 
-  _buildLanguageDialog() {
+  //No language support now
+
+  /*_buildLanguageDialog() {
     _showDialog<String>(
       context: context,
       child: MaterialDialog(
@@ -260,7 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
             .toList(),
       ),
     );
-  }
+  }*/
 
   _showDialog<T>({BuildContext context, Widget child}) {
     showDialog<T>(
