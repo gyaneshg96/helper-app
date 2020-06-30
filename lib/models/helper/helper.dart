@@ -13,26 +13,26 @@ class Helper extends Person {
   int totalUsers;
   List<String> areas;
 
-  Helper({
-    fullname,
-    phoneNumber,
-    id,
-    male,
-    this.areas,
-    this.services
-  }) : super (fullname, phoneNumber, id, male)
+  Helper({fullname, phoneNumber, id, male, areas, services})
+      : this.areas = areas,
+        this.services = services,
+        super(id: id, fullname: fullname, phoneNumber: phoneNumber, male: male);
 
   factory Helper.fromMap(Map<String, dynamic> json) => Helper(
-        id: json["id"],
-        fullname: json["fullname"],
-        phoneNumber: json["phoneNumber"],
-        male: json["male"] == "male",
-        services: json["services"],
-        areas: json["areas"]
-      );
+      id: int.parse(json["id"]),
+      fullname: json["fullname"],
+      phoneNumber: json["phoneNumber"],
+      male: json["male"] == 'male',
+      services: json["services"],
+      areas: json["areas"]);
 
   Map<String, dynamic> toMap() => {
-        
+        "id": id,
+        "fullname": fullname,
+        "phoneNumber": phoneNumber,
+        "male": male,
+        "services": services,
+        "areas": areas
       };
 }
 

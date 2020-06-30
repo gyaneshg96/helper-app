@@ -4,18 +4,18 @@ class Post {
   String title;
   String body;
 
-  Post({
+  Post(
     this.userId,
     this.id,
     this.title,
     this.body,
-  });
+  );
 
   factory Post.fromMap(Map<String, dynamic> json) => Post(
-        userId: json["userId"],
-        id: json["id"],
-        title: json["title"],
-        body: json["body"],
+        json["userId"],
+        json["id"],
+        json["title"],
+        json["body"],
       );
 
   Map<String, dynamic> toMap() => {
@@ -24,5 +24,4 @@ class Post {
         "title": title,
         "body": body,
       };
-  
 }

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "893561639413",
+    "firebase_url": "https://saywah-dab3c.firebaseio.com",
+    "project_id": "saywah-dab3c",
+    "storage_bucket": "saywah-dab3c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:893561639413:android:8b4e9d5ef6636b015990bc",
+        "android_client_info": {
+          "package_name": "com.saywah.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "893561639413-kab32rvfrs7luonnfjju8kvlh61t3a5j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDn2wfJO1G2BCkPIWVZyYg2bV8Z0sQxfUU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "893561639413-kab32rvfrs7luonnfjju8kvlh61t3a5j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
