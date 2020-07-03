@@ -6,12 +6,19 @@ class Person {
   Address address;
   DateTime joining;
 
-  Person(String fullname, String phoneNumber, int id, bool male) {
+  /*Person(String fullname, String phoneNumber, int id, bool male) {
     this.fullname = fullname;
     this.phoneNumber = phoneNumber;
     this.id = id;
     this.male = male;
-  }
+  }*/
+  Person(
+      {this.fullname,
+      this.phoneNumber,
+      this.id,
+      this.male,
+      this.address,
+      this.joining});
 }
 
 class Address {

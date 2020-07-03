@@ -1,0 +1,8 @@
+{
+  "asset": "asset:boilerplate/lib/models/helper/helper.dart",
+  "summary": {
+    "injector": [],
+    "module": [],
+    "injectable": []
+  }
+}

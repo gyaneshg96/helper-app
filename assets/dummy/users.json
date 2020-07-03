@@ -1,0 +1,20 @@
+{
+    "users": [
+        {
+            "fullname": "Gyanesh Gupta",
+            "emailId": "gyaneshg1@gmail.com",
+            "id": "1",
+            "male": "true",
+            "phoneNumber": "7054620753",
+            "password": "sallubhai"
+        },
+        {
+            "fullname": "Gyan Gupta",
+            "emailId": "gyan@gmail.com",
+            "id": "2",
+            "male": "true",
+            "phoneNumber": "7406962140",
+            "password": "sallubhai"
+        }
+    ]
+}

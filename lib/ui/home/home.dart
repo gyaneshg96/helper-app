@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   //stores:---------------------------------------------------------------------
   HelperStore _helperStore;
   //ThemeStore _themeStore;
-  
+
   User currentUser;
 
   @override
@@ -38,8 +38,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
     //no dark theme for now
     //_themeStore = Provider.of<ThemeStore>(context);
-    
-    _helperStore = Provider.of<HelperStore>(context);
+
+    _helperStore = HelperStore();
+    currentUser = ModalRoute.of(context).settings.arguments;
 
     //will fetch username from server or cache
 
