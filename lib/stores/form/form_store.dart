@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:boilerplate/models/user/user.dart';
 import 'package:boilerplate/stores/error/error_store.dart';
+import 'package:flutter/services.dart';
 import 'package:mobx/mobx.dart';
 import 'package:validators/validators.dart';
 
@@ -14,8 +15,8 @@ abstract class _FormStore with Store {
   // store for handling form errors
   final FormErrorStore formErrorStore = FormErrorStore();
 
-  static const String USERS_JSON='boilerplate/dummy/users.json';
-  
+  static const String USERS_JSON = "assets/dummy/users.json";
+
   // store for handling error messages
   final ErrorStore errorStore = ErrorStore();
 
@@ -40,7 +41,7 @@ abstract class _FormStore with Store {
   String userEmail = '';
 
   @observable
-  String password = '';
+  String password = 'sallubhai';
 
   @observable
   bool success = false;
@@ -52,12 +53,17 @@ abstract class _FormStore with Store {
   String fullName = '';
 
   @observable
-  String phoneNumber = '';
+  String phoneNumber = '7054620753';
 
   @computed
-  bool get canLogin =>
-      !formErrorStore.hasErrorsInLogin &&
+  bool get canLoginEmail =>
+      !formErrorStore.hasErrorsInEmailLogin &&
       userEmail.isNotEmpty &&
+      password.isNotEmpty;
+  @computed
+  bool get canLoginPhone =>
+      !formErrorStore.hasErrorsInPhoneLogin &&
+      phoneNumber.isNotEmpty &&
       password.isNotEmpty;
 
   @computed
@@ -143,48 +149,44 @@ abstract class _FormStore with Store {
   @action
   Future login() async {
     loading = true;
-
-
-    /*loginUtil().then((future) {
-      loading = false;
-      success = true;
-    }).catchError((e) {
-      loading = false;
-      success = false;
-      errorStore.errorMessage = e.toString().contains("ERROR_USER_NOT_FOUND")
-          ? "Username and password doesn't match"
-          : "Something went wrong, please check your internet connection and try again";
-      print(e);
-    });*/
-    loginUtil().then((future) {
-      if (future == 0){
-        success = true;
-      }
-      else if (future == 1){
+    var success;
+    try {
+      var future = await loginUtil();
+      if (future is User) {
+        success = future;
+      } else if (future == 1) {
         errorStore.errorMessage = "Invalid password";
         print(errorStore.errorMessage);
         success = false;
-      }
-      else{
+      } else {
         errorStore.errorMessage = "User don't exist";
         print(errorStore.errorMessage);
         success = false;
       }
-    }).catchError((e) {
+    } catch (e) {
       success = false;
       errorStore.errorMessage = "File not present";
       print(e);
-    }).whenComplete(() => loading = false);
+    } finally {
+      loading = false;
+    }
+    return success;
   }
 
   Future loginUtil() async {
-    List<User> users = json.decode(await new File(USERS_JSON).readAsString());
-    for (User user in users){
-      if (user.phoneNumber == phoneNumber){
-        if(user.password == password){
-          return 0;
-        }
-        else {
+    List<dynamic> dyn =
+        json.decode(await rootBundle.loadString(USERS_JSON))["users"] as List;
+    Iterable<User> users = dyn.map((json) => new User(
+        id: int.parse(json["id"]),
+        fullname: json["fullname"],
+        phoneNumber: json["phoneNumber"],
+        male: json["male"] == "true",
+        password: json["password"]));
+    for (User user in users) {
+      if (user.phoneNumber == phoneNumber) {
+        if (user.password == password) {
+          return user;
+        } else {
           return 1;
         }
       }
@@ -240,7 +242,13 @@ abstract class _FormErrorStore with Store {
   String fullName;
 
   @computed
+  bool get hasErrorsInEmailLogin => userEmail != null || password != null;
+
+  @computed
   bool get hasErrorsInLogin => userEmail != null || password != null;
+
+  @computed
+  bool get hasErrorsInPhoneLogin => phoneNumber != null || password != null;
 
   @computed
   bool get hasErrorsInRegister =>

@@ -1,4 +1,5 @@
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
+import 'package:boilerplate/models/user/user.dart';
 import 'package:boilerplate/routes.dart';
 import 'package:boilerplate/stores/form/form_store.dart';
 import 'package:boilerplate/utils/device/device_utils.dart';
@@ -138,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               children: <Widget>[
                                 _buildEmailIdField(),
                                 _buildPasswordField(),
-                                _buildSignInButton(),
+                                _buildSignInButton(false),
                                 _googleButton(),
                                 _facebookButton()
                               ],
@@ -150,7 +151,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               children: <Widget>[
                                 _buildPhoneNumberField(),
                                 _buildPasswordField(),
-                                _buildSignInButton(),
+                                _buildSignInButton(true),
                                 _googleButton(),
                                 _facebookButton()
                               ],
@@ -195,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
           textController: _userEmailController,
           inputAction: TextInputAction.next,
           onChanged: (value) {
-            _store.setUserId(_userEmailController.text);
+            _store.setUserId(_userEmailController.text.trim());
           },
           onFieldSubmitted: (value) {
             FocusScope.of(context).requestFocus(_passwordFocusNode);
@@ -212,15 +213,15 @@ class _LoginScreenState extends State<LoginScreen> {
         return TextFieldWidget(
           hint:
               AppLocalizations.of(context).translate('signup_et_phone_number'),
-          isObscure: true,
           padding: EdgeInsets.only(top: 16.0),
           icon: Icons.phone,
+          inputType: TextInputType.phone,
           // iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
           iconColor: Colors.black54,
           textController: _phoneNumberController,
           errorText: _store.formErrorStore.phoneNumber,
           onChanged: (value) {
-            _store.setPassword(_phoneNumberController.text);
+            _store.setPhoneNumber(_phoneNumberController.text.trim());
           },
         );
       },
@@ -231,8 +232,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint:
-              AppLocalizations.of(context).translate('login_et_user_password'),
           isObscure: true,
           padding: EdgeInsets.only(top: 16.0),
           icon: Icons.lock,
@@ -266,20 +265,24 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildSignInButton() {
+  Widget _buildSignInButton(bool phone) {
     return RoundedButtonWidget(
       buttonText: AppLocalizations.of(context).translate('login_btn_sign_in'),
       buttonColor: Colors.orangeAccent,
       textColor: Colors.white,
       onPressed: () async {
-        if (_store.canLogin) {
+        var success;
+        if (phone ? _store.canLoginPhone : _store.canLoginEmail) {
           DeviceUtils.hideKeyboard(context);
-          _store.login();
+          _store.login().then((success) {
+            if (success is User)
+              Navigator.pushNamed(context, Routes.home, arguments: success);
+          });
         } else {
           _showErrorMessage('Please fill in all fields');
         }
         // Navigator.pop(context);
-        Navigator.pushNamed(context, Routes.home);
+        return;
       },
     );
   }

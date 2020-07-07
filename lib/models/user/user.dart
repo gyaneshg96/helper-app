@@ -18,7 +18,7 @@ class User extends Person {
       id: int.parse(json["id"]),
       fullname: json["fullname"],
       phoneNumber: json["phoneNumber"],
-      male: json["male"] == 'male',
+      male: json["male"] == 'true',
       password: json["password"]);
 
   Map<String, dynamic> toMap() => {

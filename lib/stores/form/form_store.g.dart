@@ -9,11 +9,18 @@ part of 'form_store.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic
 
 mixin _$FormStore on _FormStore, Store {
-  Computed<bool> _$canLoginComputed;
+  Computed<bool> _$canLoginEmailComputed;
 
   @override
-  bool get canLogin =>
-      (_$canLoginComputed ??= Computed<bool>(() => super.canLogin)).value;
+  bool get canLoginEmail =>
+      (_$canLoginEmailComputed ??= Computed<bool>(() => super.canLoginEmail))
+          .value;
+  Computed<bool> _$canLoginPhoneComputed;
+
+  @override
+  bool get canLoginPhone =>
+      (_$canLoginPhoneComputed ??= Computed<bool>(() => super.canLoginPhone))
+          .value;
   Computed<bool> _$canRegisterComputed;
 
   @override
@@ -240,11 +247,23 @@ mixin _$FormStore on _FormStore, Store {
 }
 
 mixin _$FormErrorStore on _FormErrorStore, Store {
+  Computed<bool> _$hasErrorsInEmailLoginComputed;
+
+  @override
+  bool get hasErrorsInEmailLogin => (_$hasErrorsInEmailLoginComputed ??=
+          Computed<bool>(() => super.hasErrorsInEmailLogin))
+      .value;
   Computed<bool> _$hasErrorsInLoginComputed;
 
   @override
   bool get hasErrorsInLogin => (_$hasErrorsInLoginComputed ??=
           Computed<bool>(() => super.hasErrorsInLogin))
+      .value;
+  Computed<bool> _$hasErrorsInPhoneLoginComputed;
+
+  @override
+  bool get hasErrorsInPhoneLogin => (_$hasErrorsInPhoneLoginComputed ??=
+          Computed<bool>(() => super.hasErrorsInPhoneLogin))
       .value;
   Computed<bool> _$hasErrorsInRegisterComputed;
 

@@ -44,10 +44,13 @@ class _HelperProfileState extends State<HelperProfile> {
       'Dusting one a month',
       'Ironing'
     ];
+    
     helper.reviews = new List();
     helper.reviews.add(new Review("Gaand faad diya"));
     helper.reviews.add(new Review("Gandiya faad diya"));
     helper.reviews.add(new Review("Ghanta"));*/
+
+    helper = ModalRoute.of(context).settings.arguments;
   }
 
   Widget build(BuildContext context) {
@@ -133,9 +136,9 @@ class _HelperProfileState extends State<HelperProfile> {
       CarouselSlider.builder(
         options: CarouselOptions(height: 300),
         carouselController: controller,
-        itemCount: helper.reviews.length,
+        itemCount: helper.areas.length,
         itemBuilder: (BuildContext context, int i) {
-          return Container(child: Text(helper.reviews[i].comment));
+          return Container(child: Text(helper.areas[i]));
         },
       ),
       RaisedButton(

@@ -6,6 +6,7 @@ import 'package:boilerplate/stores/helper/helper_store.dart';
 import 'package:boilerplate/ui/dropdown/dropdown.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/widgets/progress_indicator_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flushbar/flushbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -22,8 +23,9 @@ class _HomeScreenState extends State<HomeScreen> {
   //stores:---------------------------------------------------------------------
   HelperStore _helperStore;
   //ThemeStore _themeStore;
-  
+
   User currentUser;
+  Future helpers;
 
   @override
   void initState() {
@@ -31,28 +33,25 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  void didChangeDependencies() {
+  Future<void> didChangeDependencies() async {
     super.didChangeDependencies();
 
     // initializing stores
 
     //no dark theme for now
     //_themeStore = Provider.of<ThemeStore>(context);
-    
-    _helperStore = Provider.of<HelperStore>(context);
+
+    _helperStore = HelperStore();
+    currentUser = ModalRoute.of(context).settings.arguments;
+    helpers = _helperStore.getHelpers(currentUser);
 
     //will fetch username from server or cache
 
-    /*currentUser = User('Gyan', '873298229');
-    currentUser.helpers = List();
-    currentUser.helpers.add(Helper('ABC', '682322398'));
-    currentUser.helpers.add(Helper('XYZ', '283298434'));
-    currentUser.helpers.add(Helper('Bai', '323128317'));*/
-
     // check to see if already called api
-    if (!_helperStore.loading) {
-      _helperStore.getHelpers(currentUser);
-    }
+    /*if (currentUser.helpers == null)
+      await _helperStore
+          .getHelpers(currentUser)
+          .then((value) => {currentUser.helpers = value});*/
   }
 
   @override
@@ -143,13 +142,28 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) {
         return _helperStore.loading
             ? CustomProgressIndicatorWidget()
-            : Material(child: _buildListView());
+            : Material(child: _buildAsyncList());
       },
     );
   }
 
-  Widget _buildListView() {
-    List<Helper> currentHelpers = currentUser.helpers;
+  FutureBuilder _buildAsyncList() {
+    return FutureBuilder<List<Helper>>(
+      future: helpers,
+      builder: (BuildContext context, AsyncSnapshot<List<Helper>> snapshot) {
+        if (snapshot.hasData) {
+          List<Helper> helpers = snapshot.data;
+          return _buildListView(helpers);
+        }
+        if (snapshot.hasError) {
+          return _buildListView(null);
+        }
+        return Container();
+      },
+    );
+  }
+
+  Widget _buildListView(currentHelpers) {
     return currentHelpers != null
         ? ListView.separated(
             itemCount: currentHelpers.length,
@@ -184,7 +198,9 @@ class _HomeScreenState extends State<HomeScreen> {
         overflow: TextOverflow.ellipsis,
         softWrap: false,
       ),
-      onTap: () => {Navigator.pushNamed(context, Routes.helperProfile)},
+      onTap: () {
+        Navigator.pushNamed(context, Routes.helperProfile, arguments: helper);
+      },
     );
   }
 
