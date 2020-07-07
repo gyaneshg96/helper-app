@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _helperStore = HelperStore();
     currentUser = ModalRoute.of(context).settings.arguments;
-    helpers = _helperStore.getHelpers(currentUser);
+    //helpers = _helperStore.getHelpers(currentUser);
 
     //will fetch username from server or cache
 
@@ -142,12 +142,13 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) {
         return _helperStore.loading
             ? CustomProgressIndicatorWidget()
-            : Material(child: _buildAsyncList());
+//            : Material(child: _buildAsyncList());
+            : Material(child: _buildFirestoreList());
       },
     );
   }
 
-  FutureBuilder _buildAsyncList() {
+  /*FutureBuilder _buildAsyncList() {
     return FutureBuilder<List<Helper>>(
       future: helpers,
       builder: (BuildContext context, AsyncSnapshot<List<Helper>> snapshot) {
@@ -161,9 +162,18 @@ class _HomeScreenState extends State<HomeScreen> {
         return Container();
       },
     );
+  }*/
+
+  StreamBuilder _buildFirestoreList() {
+    return StreamBuilder(
+        stream: Firestore.instance.collection("helpers").snapshots(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (!snapshot.hasData) return CircularProgressIndicator();
+          return _buildListView(snapshot.data.documents);
+        });
   }
 
-  Widget _buildListView(currentHelpers) {
+  Widget _buildListView(List currentHelpers) {
     return currentHelpers != null
         ? ListView.separated(
             itemCount: currentHelpers.length,
@@ -181,7 +191,15 @@ class _HomeScreenState extends State<HomeScreen> {
           );
   }
 
-  Widget _buildListItem(Helper helper) {
+  Widget _buildListItem(helper) {
+    if (helper is DocumentSnapshot) {
+      Helper newhelper = new Helper();
+      newhelper.fullname = helper['fullname'];
+      newhelper.phoneNumber = helper['phoneNumber'];
+      newhelper.areas = List<String>.from(helper['areas']);
+      newhelper.services = List<String>.from(helper['services']);
+      helper = newhelper;
+    }
     return ListTile(
       dense: true,
       leading: Icon(Icons.person_pin_circle),
