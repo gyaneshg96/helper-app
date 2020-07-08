@@ -9,6 +9,7 @@ class User extends Person {
   List savedPayments;
   List preferences;
   List pastOrder;
+  List<String> services;
 
   User({fullname, phoneNumber, id, male, password})
       : this.password = password,

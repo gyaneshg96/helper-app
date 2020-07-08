@@ -1,4 +1,5 @@
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
+import 'package:boilerplate/models/user/user.dart';
 import 'package:boilerplate/routes.dart';
 import 'package:boilerplate/stores/form/form_store.dart';
 import 'package:boilerplate/utils/device/device_utils.dart';
@@ -279,14 +280,15 @@ class _SignupScreenState extends State<SignupScreen> {
       buttonColor: Colors.orangeAccent,
       textColor: Colors.white,
       onPressed: () async {
-        /*if (_store.canRegister) {
+        if (_store.canRegister) {
           DeviceUtils.hideKeyboard(context);
-          _store.register();
+          var success = _store.register();
+          if (success is User) {
+            Navigator.pushNamed(context, Routes.started, arguments: success);
+          }
         } else {
           _showErrorMessage('Please fill in all fields');
-        }*/
-        //Navigator.pop(context);
-        Navigator.pushNamed(context, Routes.started);
+        }
       },
     );
   }

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:boilerplate/models/user/user.dart';
 import 'package:boilerplate/stores/error/error_store.dart';
@@ -144,6 +143,22 @@ abstract class _FormStore with Store {
   @action
   Future register() async {
     loading = true;
+    var success;
+    try {
+      var future = await signupUtil();
+      if (future is User) {
+        success = future;
+      } 
+    } catch (e) {
+      success = false;
+      errorStore.errorMessage = "Could not write";
+      print(e);
+    } finally {
+      loading = false;
+    }
+    return success;
+  }
+    }
   }
 
   @action
@@ -171,6 +186,10 @@ abstract class _FormStore with Store {
       loading = false;
     }
     return success;
+  }
+
+  Future signupUtil() async {
+
   }
 
   Future loginUtil() async {

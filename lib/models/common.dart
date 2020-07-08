@@ -6,12 +6,6 @@ class Person {
   Address address;
   DateTime joining;
 
-  /*Person(String fullname, String phoneNumber, int id, bool male) {
-    this.fullname = fullname;
-    this.phoneNumber = phoneNumber;
-    this.id = id;
-    this.male = male;
-  }*/
   Person(
       {this.fullname,
       this.phoneNumber,
@@ -22,10 +16,13 @@ class Person {
 }
 
 class Address {
+  String house;
   String street;
-  int pincode;
+  String area;
   String city;
-  String state;
+  String pincode;
+
+  Address({this.house, this.street, this.area, this.city, this.pincode});
 }
 
 class Ratings {

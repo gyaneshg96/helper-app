@@ -23,8 +23,8 @@ class Helper extends Person {
       fullname: json["fullname"],
       phoneNumber: json["phoneNumber"],
       male: json["male"] == 'true',
-      services: json["services"].Cast<String>().toList(),
-      areas: json["areas"].Cast<String>().toList());
+      services: List<String>.from(json["services"]),
+      areas: List<String>.from(json["areas"]));
 
   Map<String, dynamic> toMap() => {
         "id": id,
