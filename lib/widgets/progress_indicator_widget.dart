@@ -11,7 +11,8 @@ class CustomProgressIndicatorWidget extends StatelessWidget {
       alignment: Alignment.center,
       child: Container(
         height: 100,
-        constraints: BoxConstraints.expand(),
+        width: 100,
+        constraints: BoxConstraints.expand(height: 100),
         child: FittedBox(
           fit: BoxFit.none,
           child: SizedBox(
@@ -27,8 +28,7 @@ class CustomProgressIndicatorWidget extends StatelessWidget {
             ),
           ),
         ),
-        decoration: BoxDecoration(
-            color: Color.fromARGB(100, 105, 105, 105)),
+        decoration: BoxDecoration(color: Color.fromARGB(100, 105, 105, 105)),
       ),
     );
   }

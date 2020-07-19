@@ -1,9 +1,16 @@
 import 'dart:convert';
 
+import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/models/user/user.dart';
 import 'package:boilerplate/stores/error/error_store.dart';
+import 'package:boilerplate/utils/authentication/baseauth.dart';
+import 'package:boilerplate/utils/authentication/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/services.dart';
 import 'package:mobx/mobx.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:validators/validators.dart';
 
 part 'form_store.g.dart';
@@ -13,8 +20,11 @@ class FormStore = _FormStore with _$FormStore;
 abstract class _FormStore with Store {
   // store for handling form errors
   final FormErrorStore formErrorStore = FormErrorStore();
+  final Firestore store = Firestore.instance;
 
   static const String USERS_JSON = "assets/dummy/users.json";
+
+  BaseAuth auth = FBAuth();
 
   // store for handling error messages
   final ErrorStore errorStore = ErrorStore();
@@ -37,7 +47,7 @@ abstract class _FormStore with Store {
 
   // store variables:-----------------------------------------------------------
   @observable
-  String userEmail = '';
+  String userEmail = 'gyanu@gmail.com';
 
   @observable
   String password = 'sallubhai';
@@ -49,7 +59,7 @@ abstract class _FormStore with Store {
   bool loading = false;
 
   @observable
-  String fullName = '';
+  String fullName = 'Gyanesh';
 
   @observable
   String phoneNumber = '7054620753';
@@ -66,12 +76,18 @@ abstract class _FormStore with Store {
       password.isNotEmpty;
 
   @computed
-  bool get canRegister =>
+  bool get canRegisterEmail =>
       !formErrorStore.hasErrorsInRegister &&
       userEmail.isNotEmpty &&
       password.isNotEmpty &&
-      fullName.isNotEmpty &&
-      phoneNumber.isNotEmpty;
+      fullName.isNotEmpty;
+
+  @computed
+  bool get canRegisterPhoneNumber =>
+      !formErrorStore.hasErrorsInRegister &&
+      phoneNumber.isNotEmpty &&
+      password.isNotEmpty &&
+      fullName.isNotEmpty;
 
   @computed
   bool get canForgetPassword =>
@@ -142,54 +158,64 @@ abstract class _FormStore with Store {
 
   @action
   Future register() async {
+    success = false;
     loading = true;
-    var success;
     try {
-      var future = await signupUtil();
-      if (future is User) {
-        success = future;
-      } 
+      var future = await signupUtil2();
+      //widget.auth.sendEmailVerification();
+      //_showVerifyEmailSentDialog();
+
+      //write into database
+      await store
+          .collection('users')
+          .document(future)
+          .setData({"emailId": userEmail, "fullName": fullName});
+
+      //
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      preferences.setBool(Preferences.is_logged_in, true);
+      preferences.setString(Preferences.auth_token, future);
+      return future;
     } catch (e) {
       success = false;
-      errorStore.errorMessage = "Could not write";
+      errorStore.errorMessage = e.message;
       print(e);
     } finally {
       loading = false;
     }
-    return success;
-  }
-    }
+    return "";
   }
 
   @action
   Future login() async {
     loading = true;
-    var success;
     try {
-      var future = await loginUtil();
-      if (future is User) {
-        success = future;
-      } else if (future == 1) {
-        errorStore.errorMessage = "Invalid password";
-        print(errorStore.errorMessage);
-        success = false;
-      } else {
-        errorStore.errorMessage = "User don't exist";
-        print(errorStore.errorMessage);
-        success = false;
-      }
+      var future = await loginUtil2();
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      preferences.setBool(Preferences.is_logged_in, true);
+      preferences.setString(Preferences.auth_token, future);
+      return future;
     } catch (e) {
       success = false;
-      errorStore.errorMessage = "File not present";
-      print(e);
+      errorStore.errorMessage = e.message;
     } finally {
       loading = false;
     }
-    return success;
+    return "";
   }
 
   Future signupUtil() async {
-
+    List<dynamic> dyn =
+        json.decode(await rootBundle.loadString(USERS_JSON))["users"] as List;
+    Iterable<User> users = dyn.map((json) => new User(
+        id: int.parse(json["id"]),
+        fullname: json["fullname"],
+        phoneNumber: json["phoneNumber"],
+        male: json["male"] == "true",
+        password: json["password"]));
+    User newuser = new User(
+        fullname: fullName, phoneNumber: phoneNumber, password: password);
+    users.toList().add(newuser);
   }
 
   Future loginUtil() async {
@@ -211,6 +237,14 @@ abstract class _FormStore with Store {
       }
     }
     return 2;
+  }
+
+  Future loginUtil2() async {
+    return auth.signInEmail(userEmail, password);
+  }
+
+  Future signupUtil2() async {
+    return auth.signUpEmail(userEmail, password);
   }
 
   @action

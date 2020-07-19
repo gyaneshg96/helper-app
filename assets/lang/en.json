@@ -10,6 +10,7 @@
   "signup_et_user_email": "Enter your emailid",
   "signup_et_phoneNumber": "Enter your phone",
   "login_et_full_name" : "Enter full name",
+  "signup_et_full_name" : "Enter full name",
   "signup_btn_sign_up": "Sign Up",
   "signup_et_user_password": "Enter password",
   "login_end": "------------------------------------------------------------------------------------",

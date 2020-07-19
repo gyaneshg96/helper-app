@@ -2,6 +2,7 @@ import 'dart:core';
 
 class StartedData {
   static List<String> cities = [
+    'Enter your city',
     'Bengaluru',
     'Hyderabad',
     'Delhi NCR',
@@ -9,8 +10,9 @@ class StartedData {
   ];
 
   static Map<String, List<String>> areas = {
-    'Bengaluru': ['JP Nagar', 'Koramangala', 'BTM'],
-    'Mumbai': ['Chembur', 'Lokhandwala', 'Powai']
+    'Bengaluru': ['Enter your area', 'JP Nagar', 'Koramangala', 'BTM'],
+    'Mumbai': ['Enter your area', 'Chembur', 'Lokhandwala', 'Powai'],
+    'Enter your city': ['Enter your area']
   };
 
   static List<String> services = [

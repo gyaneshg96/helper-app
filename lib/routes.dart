@@ -22,7 +22,7 @@ class Routes {
   static final routes = <String, WidgetBuilder>{
     splash: (BuildContext context) => SplashScreen(),
     login: (BuildContext context) => LoginScreen(),
-    home: (BuildContext context) => HomeScreen(),
+    // home: (BuildContext context, String userId) => HomeScreen(userId: userId),
     signup: (BuildContext context) => SignupScreen(),
     started: (BuildContext context) => StartedScreen(),
     helperProfile: (BuildContext context) => HelperProfile(),

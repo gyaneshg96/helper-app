@@ -9,6 +9,7 @@ import 'package:boilerplate/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/widgets/progress_indicator_widget.dart';
 import 'package:boilerplate/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/widgets/textfield_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flushbar/flushbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -145,7 +146,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 children: <Widget>[
                                   _buildEmailIdField(),
                                   _buildPasswordField(),
-                                  _buildSignUpButton(),
+                                  _buildSignUpButton(false),
                                   _googleButton(),
                                   _facebookButton()
                                 ],
@@ -157,7 +158,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 children: <Widget>[
                                   _buildPhoneNumberField(),
                                   _buildPasswordField(),
-                                  _buildSignUpButton(),
+                                  _buildSignUpButton(true),
                                   _googleButton(),
                                   _facebookButton()
                                 ],
@@ -274,16 +275,16 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  Widget _buildSignUpButton() {
+  Widget _buildSignUpButton(bool phone) {
     return RoundedButtonWidget(
       buttonText: AppLocalizations.of(context).translate("signup_btn_sign_up"),
       buttonColor: Colors.orangeAccent,
       textColor: Colors.white,
       onPressed: () async {
-        if (_store.canRegister) {
+        if (phone ? _store.canRegisterPhoneNumber : _store.canRegisterEmail) {
           DeviceUtils.hideKeyboard(context);
-          var success = _store.register();
-          if (success is User) {
+          var success = await _store.register();
+          if (success.isNotEmpty) {
             Navigator.pushNamed(context, Routes.started, arguments: success);
           }
         } else {

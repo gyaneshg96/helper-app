@@ -21,11 +21,18 @@ mixin _$FormStore on _FormStore, Store {
   bool get canLoginPhone =>
       (_$canLoginPhoneComputed ??= Computed<bool>(() => super.canLoginPhone))
           .value;
-  Computed<bool> _$canRegisterComputed;
+  Computed<bool> _$canRegisterEmailComputed;
 
   @override
-  bool get canRegister =>
-      (_$canRegisterComputed ??= Computed<bool>(() => super.canRegister)).value;
+  bool get canRegisterEmail => (_$canRegisterEmailComputed ??=
+          Computed<bool>(() => super.canRegisterEmail))
+      .value;
+  Computed<bool> _$canRegisterPhoneNumberComputed;
+
+  @override
+  bool get canRegisterPhoneNumber => (_$canRegisterPhoneNumberComputed ??=
+          Computed<bool>(() => super.canRegisterPhoneNumber))
+      .value;
   Computed<bool> _$canForgetPasswordComputed;
 
   @override

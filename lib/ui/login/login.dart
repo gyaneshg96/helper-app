@@ -2,6 +2,7 @@ import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/models/user/user.dart';
 import 'package:boilerplate/routes.dart';
 import 'package:boilerplate/stores/form/form_store.dart';
+import 'package:boilerplate/ui/home/home.dart';
 import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/widgets/app_icon_widget.dart';
@@ -232,6 +233,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
+          hint:
+              AppLocalizations.of(context).translate('login_et_user_password'),
           isObscure: true,
           padding: EdgeInsets.only(top: 16.0),
           icon: Icons.lock,
@@ -273,10 +276,13 @@ class _LoginScreenState extends State<LoginScreen> {
       onPressed: () async {
         if (phone ? _store.canLoginPhone : _store.canLoginEmail) {
           DeviceUtils.hideKeyboard(context);
-          _store.login().then((success) {
-            if (success is User)
-              Navigator.pushNamed(context, Routes.home, arguments: success);
-          });
+          var success = await _store.login();
+          if (success != null && success.isNotEmpty) {
+            Route home = MaterialPageRoute(
+                builder: (context) => HomeScreen(userId: success));
+            Navigator.popUntil(context, (route) => route.isFirst);
+            Navigator.pushReplacement(context, home);
+          }
         } else {
           _showErrorMessage('Please fill in all fields');
         }

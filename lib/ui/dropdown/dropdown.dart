@@ -1,3 +1,4 @@
+import 'package:boilerplate/routes.dart';
 import 'package:flutter/material.dart';
 
 class Dropdown extends StatelessWidget {
@@ -51,7 +52,11 @@ class Dropdown extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
-            onTap: () => {Navigator.of(context).pop()},
+            onTap: () {
+              Navigator.popUntil(
+                  context, (Route<dynamic> route) => route.isFirst);
+              Navigator.pushReplacementNamed(context, Routes.splash);
+            },
           ),
         ],
       ),

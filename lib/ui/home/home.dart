@@ -4,9 +4,11 @@ import 'package:boilerplate/models/user/user.dart';
 import 'package:boilerplate/routes.dart';
 import 'package:boilerplate/stores/helper/helper_store.dart';
 import 'package:boilerplate/ui/dropdown/dropdown.dart';
+import 'package:boilerplate/utils/authentication/baseauth.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/widgets/progress_indicator_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flushbar/flushbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -15,6 +17,11 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
+  //will stay constant over the course of time
+  final String userId;
+  // HomeScreen({this.userId, this.auth});
+  HomeScreen({this.userId});
+
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
@@ -23,13 +30,20 @@ class _HomeScreenState extends State<HomeScreen> {
   //stores:---------------------------------------------------------------------
   HelperStore _helperStore;
   //ThemeStore _themeStore;
+  static final Firestore store = Firestore.instance;
 
   User currentUser;
-  Future helpers;
 
   @override
   void initState() {
     super.initState();
+    store
+        .collection('users')
+        .document(widget.userId)
+        .get()
+        .then((DocumentSnapshot snapshot) {
+      currentUser = User(fullname: snapshot["fullname"]);
+    });
   }
 
   @override
@@ -42,20 +56,17 @@ class _HomeScreenState extends State<HomeScreen> {
     //_themeStore = Provider.of<ThemeStore>(context);
 
     _helperStore = HelperStore();
-    currentUser = ModalRoute.of(context).settings.arguments;
+    // currentUser = ModalRoute.of(context).settings.arguments;
     //helpers = _helperStore.getHelpers(currentUser);
 
     //will fetch username from server or cache
 
     // check to see if already called api
-    /*if (currentUser.helpers == null)
-      await _helperStore
-          .getHelpers(currentUser)
-          .then((value) => {currentUser.helpers = value});*/
   }
 
   @override
   Widget build(BuildContext context) {
+    // String name = fbUser.displayName;
     String name = currentUser.fullname;
     final GlobalKey _scaffoldKey = new GlobalKey();
     return Scaffold(
@@ -120,11 +131,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildLogoutButton() {
     return IconButton(
-      onPressed: () {
-        SharedPreferences.getInstance().then((preference) {
-          preference.setBool(Preferences.is_logged_in, false);
-          Navigator.of(context).pushReplacementNamed(Routes.login);
-        });
+      onPressed: () async {
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        preferences.setBool(Preferences.is_logged_in, false);
+        preferences.setString(Preferences.auth_token, "");
+        Navigator.of(context).pushReplacementNamed(Routes.splash);
       },
       icon: Icon(
         Icons.power_settings_new,
@@ -166,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   StreamBuilder _buildFirestoreList() {
     return StreamBuilder(
-        stream: Firestore.instance.collection("helpers").snapshots(),
+        stream: store.collection("helpers").snapshots(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) return CircularProgressIndicator();
           return _buildListView(snapshot.data.documents);

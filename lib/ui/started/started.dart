@@ -1,7 +1,11 @@
 import 'package:boilerplate/models/common.dart';
 import 'package:boilerplate/models/user/user.dart';
 import 'package:boilerplate/routes.dart';
+import 'package:boilerplate/stores/error/error_store.dart';
+import 'package:boilerplate/stores/form/form_store.dart';
+import 'package:boilerplate/ui/home/home.dart';
 import 'package:boilerplate/widgets/empty_app_bar_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
 import 'staticdata.dart';
@@ -12,16 +16,18 @@ class StartedScreen extends StatefulWidget {
 }
 
 class _StartedScreenState extends State<StartedScreen> {
-  String city = "";
-  String area = "";
+  String city;
+  String area;
   List<String> services = new List();
-  User currentUser;
+  static final ErrorStore errorStore = ErrorStore();
+  String userId;
 
   @override
   void initState() {
     super.initState();
-    currentUser = ModalRoute.of(context).settings.arguments;
-    //getLocation
+    city = 'Enter your city';
+    area = 'Enter your area';
+    userId = ModalRoute.of(context).settings.arguments;
   }
 
   @override
@@ -32,14 +38,23 @@ class _StartedScreenState extends State<StartedScreen> {
       bottomNavigationBar: BottomAppBar(
           child: FlatButton(
               onPressed: () {
-                currentUser.address = new Address(area: area, city: city);
-                currentUser.services = services;
-                Navigator.pushNamed(context, Routes.home,
-                    arguments: currentUser);
+                if (canProceed) {
+                  //currentUser.address = new Address(area: area, city: city);
+                  //currentUser.services = services;
+                  Route home = MaterialPageRoute(
+                      builder: (context) => HomeScreen(userId: userId));
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                  Navigator.pushReplacement(context, home);
+                } else {
+                  errorStore.errorMessage = "Incomplete Details";
+                }
               },
               child: Text('Proceed'))),
     );
   }
+
+  bool get canProceed =>
+      area.isNotEmpty && city.isNotEmpty && services.length == 0;
 
   Widget _buildStartedScreen() {
     return SingleChildScrollView(
@@ -68,7 +83,7 @@ class _StartedScreenState extends State<StartedScreen> {
 
   Widget _buildSelectCity() {
     return DropdownButton<String>(
-      value: city == "" ? "Enter your city ..." : city,
+      value: this.city,
       icon: Icon(Icons.arrow_downward),
       iconSize: 24,
       elevation: 16,
@@ -79,7 +94,7 @@ class _StartedScreenState extends State<StartedScreen> {
       ),
       onChanged: (String newValue) {
         setState(() {
-          city = newValue;
+          this.city = newValue;
         });
       },
       items: StartedData.cities.map<DropdownMenuItem<String>>((String value) {
@@ -93,7 +108,7 @@ class _StartedScreenState extends State<StartedScreen> {
 
   Widget _buildSelectArea() {
     return DropdownButton<String>(
-      value: city == "" ? "Enter your city ..." : city,
+      value: this.area,
       icon: Icon(Icons.arrow_downward),
       iconSize: 24,
       elevation: 16,
@@ -104,10 +119,11 @@ class _StartedScreenState extends State<StartedScreen> {
       ),
       onChanged: (String newValue) {
         setState(() {
-          city = newValue;
+          this.area = newValue;
         });
       },
-      items: StartedData.cities.map<DropdownMenuItem<String>>((String value) {
+      items: StartedData.areas[this.city]
+          .map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
