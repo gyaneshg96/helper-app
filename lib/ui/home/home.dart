@@ -5,6 +5,7 @@ import 'package:boilerplate/routes.dart';
 import 'package:boilerplate/stores/helper/helper_store.dart';
 import 'package:boilerplate/ui/dropdown/dropdown.dart';
 import 'package:boilerplate/utils/authentication/baseauth.dart';
+import 'package:boilerplate/utils/authentication/extrautils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/widgets/progress_indicator_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -42,7 +43,9 @@ class _HomeScreenState extends State<HomeScreen> {
         .document(widget.userId)
         .get()
         .then((DocumentSnapshot snapshot) {
-      currentUser = User(fullname: snapshot["fullname"]);
+      setState(() {
+        currentUser = User(fullname: snapshot.data["fullname"]);
+      });
     });
   }
 
@@ -132,11 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildLogoutButton() {
     return IconButton(
       onPressed: () async {
-        SharedPreferences preferences = await SharedPreferences.getInstance();
-        Navigator.of(context).popUntil((route) => route.isFirst);
-        preferences.setBool(Preferences.is_logged_in, false);
-        preferences.setString(Preferences.auth_token, "");
-        Navigator.of(context).pushReplacementNamed(Routes.splash);
+        await ExtraUtils.logOut(context);
       },
       icon: Icon(
         Icons.power_settings_new,

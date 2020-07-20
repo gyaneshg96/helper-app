@@ -1,4 +1,5 @@
 import 'package:boilerplate/routes.dart';
+import 'package:boilerplate/utils/authentication/extrautils.dart';
 import 'package:flutter/material.dart';
 
 class Dropdown extends StatelessWidget {
@@ -52,10 +53,8 @@ class Dropdown extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text('Logout'),
-            onTap: () {
-              Navigator.popUntil(
-                  context, (Route<dynamic> route) => route.isFirst);
-              Navigator.pushReplacementNamed(context, Routes.splash);
+            onTap: () async {
+              await ExtraUtils.logOut(context);
             },
           ),
         ],

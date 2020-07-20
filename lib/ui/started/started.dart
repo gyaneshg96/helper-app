@@ -5,6 +5,7 @@ import 'package:boilerplate/stores/error/error_store.dart';
 import 'package:boilerplate/stores/form/form_store.dart';
 import 'package:boilerplate/ui/home/home.dart';
 import 'package:boilerplate/widgets/empty_app_bar_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_buttons/grouped_buttons.dart';
@@ -27,6 +28,12 @@ class _StartedScreenState extends State<StartedScreen> {
     super.initState();
     city = 'Enter your city';
     area = 'Enter your area';
+  }
+
+  @override
+  void didChangeDependencies() {
+    // TODO: implement didChangeDependencies
+    super.didChangeDependencies();
     userId = ModalRoute.of(context).settings.arguments;
   }
 
@@ -37,14 +44,17 @@ class _StartedScreenState extends State<StartedScreen> {
       body: _buildStartedScreen(),
       bottomNavigationBar: BottomAppBar(
           child: FlatButton(
-              onPressed: () {
+              onPressed: () async {
                 if (canProceed) {
-                  //currentUser.address = new Address(area: area, city: city);
-                  //currentUser.services = services;
-                  Route home = MaterialPageRoute(
-                      builder: (context) => HomeScreen(userId: userId));
-                  Navigator.popUntil(context, (route) => route.isFirst);
-                  Navigator.pushReplacement(context, home);
+                  try {
+                    await _pushUserData();
+                    Route home = MaterialPageRoute(
+                        builder: (context) => HomeScreen(userId: userId));
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                    Navigator.pushReplacement(context, home);
+                  } catch (e) {
+                    errorStore.errorMessage = "Cant push details";
+                  }
                 } else {
                   errorStore.errorMessage = "Incomplete Details";
                 }
@@ -55,6 +65,14 @@ class _StartedScreenState extends State<StartedScreen> {
 
   bool get canProceed =>
       area.isNotEmpty && city.isNotEmpty && services.length == 0;
+
+  Future<void> _pushUserData() async {
+    Firestore store = Firestore.instance;
+    await store
+        .collection('users')
+        .document(userId)
+        .setData({area: area, city: city}, merge: true);
+  }
 
   Widget _buildStartedScreen() {
     return SingleChildScrollView(
@@ -68,7 +86,8 @@ class _StartedScreenState extends State<StartedScreen> {
                   _buildDetectLocation(),
                   _buildSelectCity(),
                   _buildSelectArea(),
-                  _buildSelectServices()
+                  _buildHeading(),
+                  _buildCheckBoxes()
                 ])));
   }
 
@@ -132,22 +151,23 @@ class _StartedScreenState extends State<StartedScreen> {
     );
   }
 
-  Widget _buildSelectServices() {
-    return ListView(children: <Widget>[
-      Container(
-        padding: const EdgeInsets.only(left: 14.0, top: 14.0),
-        child: Text(
-          "Select Your Services",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-        ),
+  Widget _buildHeading() {
+    return Container(
+      padding: const EdgeInsets.only(left: 14.0, top: 14.0),
+      child: Text(
+        "Select Your Services",
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
       ),
-      CheckboxGroup(
-        labels: StartedData.services,
-        onSelected: (List<String> checked) {
-          services = checked;
-        },
-        disabled: ['Gardening'],
-      )
-    ]);
+    );
+  }
+
+  Widget _buildCheckBoxes() {
+    return CheckboxGroup(
+      labels: StartedData.services,
+      onSelected: (List<String> checked) {
+        services = checked;
+      },
+      disabled: ['Gardening'],
+    );
   }
 }

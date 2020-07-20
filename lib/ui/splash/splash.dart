@@ -1,7 +1,3 @@
-import 'dart:async';
-
-import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
-import 'package:boilerplate/models/user/user.dart';
 import 'package:boilerplate/routes.dart';
 import 'package:boilerplate/ui/home/home.dart';
 import 'package:boilerplate/utils/authentication/baseauth.dart';
@@ -33,22 +29,18 @@ class _SplashScreenState extends State<SplashScreen> {
     super.initState();
     // startTimer();
     SharedPreferences.getInstance().then((preferences) {
-      if (preferences.getBool(Preferences.is_logged_in) ?? false) {
+      if (preferences.getBool("isLoggedIn") ?? false) {
+        setState(() {
+          authStatus = AuthStatus.LOGGED_IN;
+          _userId = preferences.getString("authToken");
+        });
+      } else {
         setState(() {
           authStatus = AuthStatus.NOT_LOGGED_IN;
           _userId = "";
         });
-      } else {
-        setState(() {
-          authStatus = AuthStatus.LOGGED_IN;
-          _userId = preferences.getString(Preferences.auth_token);
-        });
       }
     });
-    /*setState(() {
-      authStatus = AuthStatus.NOT_LOGGED_IN;
-      _userId = "";
-    });*/
     /*widget.auth.getCurrentUser().then((user) {
       setState(() {
         if (user != null) {
@@ -58,24 +50,6 @@ class _SplashScreenState extends State<SplashScreen> {
             user?.uid == null ? AuthStatus.NOT_LOGGED_IN : AuthStatus.LOGGED_IN;
       });
     });*/
-  }
-
-  void loginCallback() {
-    widget.auth.getCurrentUser().then((user) {
-      setState(() {
-        _userId = user.uid.toString();
-      });
-    });
-    setState(() {
-      authStatus = AuthStatus.LOGGED_IN;
-    });
-  }
-
-  void logoutCallback() {
-    setState(() {
-      authStatus = AuthStatus.NOT_LOGGED_IN;
-      _userId = "";
-    });
   }
 
   @override
@@ -88,7 +62,7 @@ class _SplashScreenState extends State<SplashScreen> {
         return getLogoutPage(context);
         break;
       case AuthStatus.LOGGED_IN:
-        if (_userId.length > 0 && _userId != null) {
+        if (_userId != null && _userId.length > 0) {
           // User user = _getUserData(currentUser);
           return new HomeScreen(userId: _userId);
         } else
@@ -121,17 +95,6 @@ class _SplashScreenState extends State<SplashScreen> {
           )
         ]));
   }
-
-  /*navigate() async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-
-    if (preferences.getBool(Preferences.is_logged_in) ??
-        false && preferences.getString(Preferences.auth_token) == "") {
-      authStatus = AuthStatus.NOT_LOGGED_IN;
-    } else {
-      authStatus = AuthStatus.LOGGED_IN;
-    }
-  }*/
 
   Widget buildWaitingScreen() {
     return CircularProgressIndicator(backgroundColor: Colors.amber);
