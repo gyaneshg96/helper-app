@@ -1,2 +1,2 @@
 # Boilerplate Project
-An app to rent helper and maid. For now simple appointment booking
+An app to rent housekeep and cooks. For now simple viewing and inserting helpers in Bengaluru. 

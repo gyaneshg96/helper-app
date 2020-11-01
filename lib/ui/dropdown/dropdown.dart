@@ -1,3 +1,4 @@
+import 'package:boilerplate/constants/colors.dart';
 import 'package:boilerplate/routes.dart';
 import 'package:boilerplate/utils/authentication/extrautils.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class Dropdown extends StatelessWidget {
                 style: TextStyle(color: Colors.white, fontSize: 25),
               ),
               decoration: BoxDecoration(
-                color: Colors.orange,
+                color: AppColors.greenBlue[700],
               )),
           ListTile(
             leading: Icon(Icons.list),
@@ -28,6 +29,11 @@ class Dropdown extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.forward),
             title: Text('Refer App'),
+            onTap: () => {},
+          ),
+          ListTile(
+            leading: Icon(Icons.forward),
+            title: Text('Insert Helper'),
             onTap: () => {},
           ),
           ListTile(

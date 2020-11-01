@@ -279,7 +279,8 @@ class _LoginScreenState extends State<LoginScreen> {
           var success = await _store.login();
           if (success != null && success.isNotEmpty) {
             Route home = MaterialPageRoute(
-                builder: (context) => HomeScreen(userId: success));
+                //builder: (context) => HomeScreen(userId: success));
+                builder: (context) => HomeScreen());
             Navigator.popUntil(context, (route) => route.isFirst);
             Navigator.pushReplacement(context, home);
           }

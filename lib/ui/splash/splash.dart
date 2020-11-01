@@ -28,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     // startTimer();
-    SharedPreferences.getInstance().then((preferences) {
+    /*SharedPreferences.getInstance().then((preferences) {
       if (preferences.getBool("isLoggedIn") ?? false) {
         setState(() {
           authStatus = AuthStatus.LOGGED_IN;
@@ -40,7 +40,10 @@ class _SplashScreenState extends State<SplashScreen> {
           _userId = "";
         });
       }
-    });
+    });*/
+
+    //remove authentication for now
+
     /*widget.auth.getCurrentUser().then((user) {
       setState(() {
         if (user != null) {
@@ -52,9 +55,11 @@ class _SplashScreenState extends State<SplashScreen> {
     });*/
   }
 
+  //guest userid = 0
+
   @override
   Widget build(BuildContext context) {
-    switch (authStatus) {
+    /*switch (authStatus) {
       case AuthStatus.NOT_DETERMINED:
         return buildWaitingScreen();
         break;
@@ -70,7 +75,8 @@ class _SplashScreenState extends State<SplashScreen> {
         break;
       default:
         return buildWaitingScreen();
-    }
+      }*/
+    return new HomeScreen();
   }
 
   Widget getLogoutPage(BuildContext context) {

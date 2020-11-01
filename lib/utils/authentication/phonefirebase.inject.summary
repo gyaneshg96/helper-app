@@ -1,0 +1,8 @@
+{
+  "asset": "asset:boilerplate/lib/utils/authentication/phonefirebase.dart",
+  "summary": {
+    "injector": [],
+    "module": [],
+    "injectable": []
+  }
+}

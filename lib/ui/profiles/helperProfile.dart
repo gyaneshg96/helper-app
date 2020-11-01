@@ -1,3 +1,4 @@
+import 'package:boilerplate/constants/font_family.dart';
 import 'package:boilerplate/models/helper/helper.dart';
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -12,8 +13,8 @@ class MyBullet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new Container(
-      height: 20.0,
-      width: 20.0,
+      height: 5.0,
+      width: 5.0,
       decoration: new BoxDecoration(
         color: Colors.black,
         shape: BoxShape.circle,
@@ -37,19 +38,6 @@ class _HelperProfileState extends State<HelperProfile> {
     super.didChangeDependencies();
     //will fetch username from server or cache
 
-    /*helper = Helper('Kantabai', '8232398123');
-    helper.services = [
-      'Washing bathroom',
-      'Utensils, mopping and trash collecting',
-      'Dusting one a month',
-      'Ironing'
-    ];
-    
-    helper.reviews = new List();
-    helper.reviews.add(new Review("Gaand faad diya"));
-    helper.reviews.add(new Review("Gandiya faad diya"));
-    helper.reviews.add(new Review("Ghanta"));*/
-
     helper = ModalRoute.of(context).settings.arguments;
   }
 
@@ -57,7 +45,7 @@ class _HelperProfileState extends State<HelperProfile> {
     return Scaffold(
         appBar: AppBar(
             backgroundColor: Colors.orange,
-            leading: BackButton(color: Colors.white),
+            leading: BackButton(color: Colors.amber[50]),
             actions: <Widget>[
               Checkbox(
                   value: myHelper,
@@ -77,50 +65,93 @@ class _HelperProfileState extends State<HelperProfile> {
   Widget _makeBody() {
     return SingleChildScrollView(
         child: Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
+        Padding(padding: EdgeInsets.all(10.0)),
         _makeIntro(),
+        Padding(padding: EdgeInsets.all(10.0)),
+        Divider(),
+        _servicesHeading(),
+        Divider(),
         _makeServicesSection(),
-        _makeAvailability(),
-        _makeReviewSection()
+        Divider(),
+        _locationsServed()
+        // _makeAvailability(),
+        // _makeReviewSection()
       ],
     ));
   }
 
-  Widget _makeIntro() {
-    return Row(children: <Widget>[
-      Container(
-          width: 140.0,
-          height: 140.0,
-          decoration: new BoxDecoration(
-            shape: BoxShape.circle,
-            image: new DecorationImage(
-              image: new ExactAssetImage('assets/images/img_login.jpg'),
-              fit: BoxFit.cover,
-            ),
-          )),
-      Card(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(helper.fullname),
-            Text(helper.phoneNumber),
-            Text('Rating : 95%')
-          ],
+  Widget _locationsServed() {
+    return Container(
+        height: 200,
+        decoration: BoxDecoration(
+          color: Colors.yellow[100],
+          borderRadius: BorderRadius.circular(5),
         ),
-      )
-    ]);
+        child: ListView.builder(
+            itemCount: helper.areas.length,
+            padding: EdgeInsets.all(3),
+            itemBuilder: (BuildContext context, int i) {
+              return _singleLocation(helper.areas[i]);
+            }));
+  }
+
+  Widget _singleLocation(String location) {
+    return ListTile(title: Text(location));
+  }
+
+  Widget _makeIntro() {
+    return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Container(
+              width: 100.0,
+              height: 100.0,
+              decoration: new BoxDecoration(
+                shape: BoxShape.circle,
+                image: new DecorationImage(
+                  image: new ExactAssetImage('assets/images/img_login.jpg'),
+                  fit: BoxFit.cover,
+                ),
+              )),
+          Container(
+              width: 250,
+              height: 100,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(15))),
+              child: Card(
+                  elevation: 5,
+                  child: ListTile(
+                    title: Text(helper.fullname,
+                        style: TextStyle(
+                            fontFamily: FontFamily.productSans,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 30)),
+                    subtitle: Text(helper.phoneNumber,
+                        style: TextStyle(fontSize: 20)),
+                  )))
+        ]);
   }
 
   //what the helper can do
   Widget _makeServicesSection() {
     List services = helper.services;
     return Container(
-      height: 300,
+      height: 50,
       child: ListView.builder(
           itemCount: services.length,
           itemBuilder: (BuildContext context, int i) {
             return new ListTile(
-                leading: MyBullet(), title: new Text(services[i]));
+                leading: MyBullet(),
+                title: new Text(
+                  services[i],
+                  style: TextStyle(
+                      fontFamily: FontFamily.roboto,
+                      fontSize: 20,
+                      fontStyle: FontStyle.italic),
+                ));
           }),
     );
   }
@@ -128,6 +159,20 @@ class _HelperProfileState extends State<HelperProfile> {
   //what time of the day available
   Widget _makeAvailability() {
     return Container(height: 200, child: Text('Not available at all'));
+  }
+
+  Widget _servicesHeading() {
+    return Container(
+        width: 200,
+        height: 40,
+        decoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+          color: Colors.amber[100],
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Text('Services',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontFamily: FontFamily.roboto, fontSize: 20)));
   }
 
   Widget _makeReviewSection() {

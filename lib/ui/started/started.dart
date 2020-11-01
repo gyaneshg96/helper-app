@@ -49,7 +49,8 @@ class _StartedScreenState extends State<StartedScreen> {
                   try {
                     await _pushUserData();
                     Route home = MaterialPageRoute(
-                        builder: (context) => HomeScreen(userId: userId));
+                        //builder: (context) => HomeScreen(userId: userId));
+                        builder: (context) => HomeScreen());
                     Navigator.popUntil(context, (route) => route.isFirst);
                     Navigator.pushReplacement(context, home);
                   } catch (e) {

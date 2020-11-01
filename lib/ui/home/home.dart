@@ -1,3 +1,4 @@
+import 'package:boilerplate/constants/colors.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/models/helper/helper.dart';
 import 'package:boilerplate/models/user/user.dart';
@@ -19,9 +20,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   //will stay constant over the course of time
-  final String userId;
-  // HomeScreen({this.userId, this.auth});
-  HomeScreen({this.userId});
+  final String userId = "0";
+  //guest
+
+  //HomeScreen({this.userId, this.auth});
+  //HomeScreen({this.userId});
+
+  HomeScreen();
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -31,22 +36,22 @@ class _HomeScreenState extends State<HomeScreen> {
   //stores:---------------------------------------------------------------------
   HelperStore _helperStore;
   //ThemeStore _themeStore;
-  static final Firestore store = Firestore.instance;
+  //static final Firestore store = Firestore.instance;
 
   User currentUser;
 
   @override
   void initState() {
     super.initState();
-    store
+    /*store
         .collection('users')
         .document(widget.userId)
         .get()
         .then((DocumentSnapshot snapshot) {
       setState(() {
-        currentUser = User(fullname: snapshot.data["fullname"]);
+        currentUser = User(fullname: snapshot.data["fullName"]);
       });
-    });
+    });*/
   }
 
   @override
@@ -59,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
     //_themeStore = Provider.of<ThemeStore>(context);
 
     _helperStore = HelperStore();
+
     // currentUser = ModalRoute.of(context).settings.arguments;
     //helpers = _helperStore.getHelpers(currentUser);
 
@@ -69,8 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // String name = fbUser.displayName;
-    String name = currentUser.fullname;
+    String name = "Guest";
+    //String name = currentUser.fullname;
     final GlobalKey _scaffoldKey = new GlobalKey();
     return Scaffold(
       key: _scaffoldKey,
@@ -78,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: _buildBody(),
       drawer: Dropdown(name),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.orange,
+        color: AppColors.greenBlue[500],
         child: Row(
           children: <Widget>[
             IconButton(
@@ -101,21 +107,22 @@ class _HomeScreenState extends State<HomeScreen> {
   // app bar methods:-----------------------------------------------------------
   Widget _buildAppBar(GlobalKey _scaffoldKey) {
     return AppBar(
-      title: Text(AppLocalizations.of(context).translate('home_tv_posts')),
       actions: _buildActions(context),
-      /*leading: IconButton(
-        icon: Icon(Icons.gamepad, color: Colors.white),
+      elevation: 0,
+      leading: IconButton(
+        //icon: SvgPicture.asset("assets/icons/menu.svg"),
+        icon:Icon(Icons.menu),
         onPressed: () => {
           if (Scaffold.of(context).isEndDrawerOpen)
             {Scaffold.of(context).openDrawer()}
           else
             {Navigator.of(context).pop()}
         },
-      ),*/
+      ),
     );
   }
 
-  List<Widget> _buildActions(BuildContext context) {
+  /List<Widget> _buildActions(BuildContext context) {
     return <Widget>[_buildLogoutButton(), _buildSOSButton()];
   }
 
@@ -153,13 +160,12 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) {
         return _helperStore.loading
             ? CustomProgressIndicatorWidget()
-//            : Material(child: _buildAsyncList());
-            : Material(child: _buildFirestoreList());
+           : Material(child: _buildAsyncList());
       },
     );
   }
 
-  /*FutureBuilder _buildAsyncList() {
+  FutureBuilder _buildAsyncList() {
     return FutureBuilder<List<Helper>>(
       future: helpers,
       builder: (BuildContext context, AsyncSnapshot<List<Helper>> snapshot) {
@@ -173,16 +179,16 @@ class _HomeScreenState extends State<HomeScreen> {
         return Container();
       },
     );
-  }*/
+  }
 
-  StreamBuilder _buildFirestoreList() {
+  /*StreamBuilder _buildFirestoreList() {
     return StreamBuilder(
         stream: store.collection("helpers").snapshots(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (!snapshot.hasData) return CircularProgressIndicator();
           return _buildListView(snapshot.data.documents);
         });
-  }
+  }*/
 
   Widget _buildListView(List currentHelpers) {
     return currentHelpers != null
@@ -233,6 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // ignore: unused_element
   Widget _handleErrorMessage() {
     return Observer(
       builder: (context) {
