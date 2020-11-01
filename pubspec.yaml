@@ -42,8 +42,12 @@ dependencies:
   # run below mentioned commands to generate launcher icons
   # flutter packages get
   # flutter packages pub run flutter_launcher_icons:main
-  flutter_launcher_icons: ^0.7.4
+  flutter_launcher_icons: ^0.8.1
+    image_path: "assets/icons/saywah_app_icon.png"
+    android: true
+    ios: true
 
+  
   # Flogs, a powerful logging framework
   f_logs: ^1.2.2
 
