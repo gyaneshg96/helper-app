@@ -37,9 +37,34 @@
                 "old-age"
             ],
             "areas": [
+                "Jayanagar"
+            ]
+        },
+        {
+            "fullname": "Raj",
+            "id": "4",
+            "male": "true",
+            "phoneNumber": "8826315638",
+            "services": [
+                "cook"
+            ],
+            "areas": [
                 "Jayanagar",
                 "Bilekhalli"
             ]
+        },
+        {
+            "fullname": "sanju",
+            "id": "3",
+            "male": "true",
+            "phoneNumber": "8816305638",
+            "services": [
+                "clean"
+            ],
+            "areas": [
+                "Whitefield"
+            ]
         }
+
     ]
 }

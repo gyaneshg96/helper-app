@@ -1,7 +1,8 @@
 import 'package:boilerplate/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/constants/dimens.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_switch/flutter_switch.dart';
+//import 'package:flutter_svg/flutter_svg.dart';
 
 class HeaderWithSearchBox extends StatelessWidget {
   const HeaderWithSearchBox({
@@ -13,9 +14,9 @@ class HeaderWithSearchBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool isSwitched = true;
     return Container(
       margin: EdgeInsets.only(bottom: Dimens.default_padding * 2.5),
-      // It will cover 20% of our total height
       height: size.height * 0.2,
       child: Stack(
         children: <Widget>[
@@ -35,13 +36,32 @@ class HeaderWithSearchBox extends StatelessWidget {
             ),
             child: Row(
               children: <Widget>[
-                Text(
-                  'Hi Uishopy!',
-                  style: Theme.of(context).textTheme.headline5.copyWith(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                ),
+                /*Switch(
+                  value: isSwitched,
+                  onChanged: (value) {
+                    isSwitched = value;
+                    print(isSwitched);
+                  },
+                  activeTrackColor: AppColors.greenBlueAccent[200],
+                  activeColor: AppColors.greenBlue[700],
+                ),*/
+                FlutterSwitch(
+                    value: isSwitched,
+                    width: 70.0,
+                    height: 35.0,
+                    valueFontSize: 25.0,
+                    toggleSize: 45.0,
+                    padding: 8.0,
+                    activeText: "Housekeep",
+                    inactiveText: "Cook",
+                    inactiveColor: AppColors.greenBlueAccent[200],
+                    activeColor: AppColors.greenBlue[700],
+                    showOnOff: true,
+                    onToggle: (val) {
+                      isSwitched = !isSwitched;
+                    }),
                 Spacer(),
-                Image.asset("assets/images/logo.png")
+                Image.asset("assets/images/saywah_logo_low.png")
               ],
             ),
           ),
@@ -57,13 +77,13 @@ class HeaderWithSearchBox extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
-                boxShadow: [
+                /*boxShadow: [
                   BoxShadow(
                     offset: Offset(0, 10),
                     blurRadius: 50,
                     color: AppColors.greenBlue[500].withOpacity(0.23),
                   ),
-                ],
+                ],*/
               ),
               child: Row(
                 children: <Widget>[
@@ -73,7 +93,7 @@ class HeaderWithSearchBox extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: "Search",
                         hintStyle: TextStyle(
-                          color: AppColors.greenBlue[500].withOpacity(0.5),
+                          color: AppColors.greenBlue[700].withOpacity(0.5),
                         ),
                         enabledBorder: InputBorder.none,
                         focusedBorder: InputBorder.none,
@@ -83,7 +103,8 @@ class HeaderWithSearchBox extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SvgPicture.asset("assets/icons/search.svg"),
+                  //SvgPicture.asset("assets/icons/search.svg"),
+                  Icon(Icons.search, color: AppColors.greenBlue[700]),
                 ],
               ),
             ),

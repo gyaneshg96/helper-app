@@ -15,7 +15,7 @@ class HelperStore = _HelperStore with _$HelperStore;
 abstract class _HelperStore with Store {
   // store for handling errors
   final ErrorStore errorStore = ErrorStore();
-  final Firestore store = Firestore.instance;
+  //final Firestore store = Firestore.instance;
 
   _HelperStore();
 
@@ -56,15 +56,16 @@ abstract class _HelperStore with Store {
   Future getHelpersUtil(User user) async {
     //for now we just return all helpers
     //TODO: Delete it later
-    /*List<dynamic> dyn = json
-        .decode(await rootBundle.loadString(HELPER_JSON))["helpers"] as List;
+    List<dynamic> dyn = json.decode(
+            await rootBundle.loadString("assets/dummy/helpers.json"))["helpers"]
+        as List;
     Iterable<Helper> helpers = dyn.map((json) => new Helper(
         id: int.parse(json["id"]),
         fullname: json["fullname"],
         phoneNumber: json["phoneNumber"],
         male: json["male"] == 'male',
         services: List<String>.from(json["services"]),
-        areas: List<String>.from(json["services"])));
-    return helpers.toList();*/
+        areas: List<String>.from(json["areas"])));
+    return helpers.toList();
   }
 }

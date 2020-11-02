@@ -1,10 +1,15 @@
 import 'package:boilerplate/constants/colors.dart';
+import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/models/helper/helper.dart';
 import 'package:boilerplate/models/user/user.dart';
 import 'package:boilerplate/routes.dart';
 import 'package:boilerplate/stores/helper/helper_store.dart';
 import 'package:boilerplate/ui/dropdown/dropdown.dart';
+import 'package:boilerplate/ui/home/header.dart';
+import 'package:boilerplate/ui/home/listitem.dart';
+import 'package:boilerplate/ui/home/richtext.dart';
+import 'package:boilerplate/ui/profiles/helperProfile.dart';
 import 'package:boilerplate/utils/authentication/baseauth.dart';
 import 'package:boilerplate/utils/authentication/extrautils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -35,6 +40,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   //stores:---------------------------------------------------------------------
   HelperStore _helperStore;
+  Future<List<Helper>> helpers;
   //ThemeStore _themeStore;
   //static final Firestore store = Firestore.instance;
 
@@ -64,9 +70,10 @@ class _HomeScreenState extends State<HomeScreen> {
     //_themeStore = Provider.of<ThemeStore>(context);
 
     _helperStore = HelperStore();
+    currentUser = User(fullname: "Sallu");
 
     // currentUser = ModalRoute.of(context).settings.arguments;
-    //helpers = _helperStore.getHelpers(currentUser);
+    helpers = _helperStore.getHelpers(currentUser);
 
     //will fetch username from server or cache
 
@@ -83,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: _buildAppBar(_scaffoldKey),
       body: _buildBody(),
       drawer: Dropdown(name),
-      bottomNavigationBar: BottomAppBar(
+      /*bottomNavigationBar: BottomAppBar(
         color: AppColors.greenBlue[500],
         child: Row(
           children: <Widget>[
@@ -100,18 +107,18 @@ class _HomeScreenState extends State<HomeScreen> {
             )
           ],
         ),
-      ),
+      )*/
     );
   }
 
   // app bar methods:-----------------------------------------------------------
   Widget _buildAppBar(GlobalKey _scaffoldKey) {
     return AppBar(
-      actions: _buildActions(context),
-      elevation: 0,
+      //actions: _buildActions(context),
+      elevation: 5,
       leading: IconButton(
         //icon: SvgPicture.asset("assets/icons/menu.svg"),
-        icon:Icon(Icons.menu),
+        icon: Icon(Icons.menu),
         onPressed: () => {
           if (Scaffold.of(context).isEndDrawerOpen)
             {Scaffold.of(context).openDrawer()}
@@ -122,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /List<Widget> _buildActions(BuildContext context) {
+  List<Widget> _buildActions(BuildContext context) {
     return <Widget>[_buildLogoutButton(), _buildSOSButton()];
   }
 
@@ -152,17 +159,33 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // body methods:--------------------------------------------------------------
   Widget _buildBody() {
-    return Stack(children: <Widget>[_buildMainContent()]);
+    Size size = MediaQuery.of(context).size;
+    return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          HeaderWithSearchBox(size: size),
+          _buildTitle(),
+          _buildMainContent(size.height),
+          SizedBox(height: Dimens.default_padding),
+        ]);
   }
 
-  Widget _buildMainContent() {
-    return Observer(
-      builder: (context) {
-        return _helperStore.loading
-            ? CustomProgressIndicatorWidget()
-           : Material(child: _buildAsyncList());
-      },
-    );
+  Widget _buildTitle() {
+    return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: Dimens.default_padding),
+        child: TitleWithCustomUnderline(text: "Helpers"));
+  }
+
+  Widget _buildMainContent(size) {
+    return Container(
+        height: size * 0.5,
+        child: Observer(
+          builder: (context) {
+            return _helperStore.loading
+                ? CustomProgressIndicatorWidget()
+                : _buildAsyncList();
+          },
+        ));
   }
 
   FutureBuilder _buildAsyncList() {
@@ -192,11 +215,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildListView(List currentHelpers) {
     return currentHelpers != null
-        ? ListView.separated(
+        ? ListView.builder(
             itemCount: currentHelpers.length,
-            separatorBuilder: (context, position) {
-              return Divider();
-            },
+            shrinkWrap: true,
             itemBuilder: (context, position) {
               return _buildListItem(currentHelpers[position]);
             },
@@ -217,26 +238,15 @@ class _HomeScreenState extends State<HomeScreen> {
       newhelper.services = List<String>.from(helper['services']);
       helper = newhelper;
     }
-    return ListTile(
-      dense: true,
-      leading: Icon(Icons.person_pin_circle),
-      //image of a person
-      title: Text(
-        helper.fullname,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        softWrap: false,
-      ),
-      subtitle: Text(
-        helper.phoneNumber,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        softWrap: false,
-      ),
-      onTap: () {
-        Navigator.pushNamed(context, Routes.helperProfile, arguments: helper);
-      },
-    );
+    // print(helper.areas.join(','));
+    return HelperCard(
+        image: "assets/images/test_pic.jpg",
+        name: helper.fullname,
+        locations: helper.areas.join(','),
+        roles: helper.services.join(','),
+        press: () {
+          Navigator.pushNamed(context, Routes.helperProfile, arguments: helper);
+        });
   }
 
   // ignore: unused_element

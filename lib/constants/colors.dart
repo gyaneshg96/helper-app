@@ -34,4 +34,6 @@ class AppColors {
     400: Color(0xFF60F5FF),
     700: Color(0xFF47F4FF),
   };
+
+  static const kTextColor = Color(0xFF3C4046);
 }

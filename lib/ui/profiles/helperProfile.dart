@@ -1,3 +1,4 @@
+import 'package:boilerplate/constants/colors.dart';
 import 'package:boilerplate/constants/font_family.dart';
 import 'package:boilerplate/models/helper/helper.dart';
 import 'package:flutter/material.dart';
@@ -44,8 +45,8 @@ class _HelperProfileState extends State<HelperProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            backgroundColor: Colors.orange,
-            leading: BackButton(color: Colors.amber[50]),
+            backgroundColor: AppColors.greenBlue[500],
+            leading: BackButton(),
             actions: <Widget>[
               Checkbox(
                   value: myHelper,
@@ -86,7 +87,7 @@ class _HelperProfileState extends State<HelperProfile> {
     return Container(
         height: 200,
         decoration: BoxDecoration(
-          color: Colors.yellow[100],
+          color: AppColors.greenBlue[200],
           borderRadius: BorderRadius.circular(5),
         ),
         child: ListView.builder(

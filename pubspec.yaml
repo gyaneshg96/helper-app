@@ -1,5 +1,5 @@
 name: boilerplate
-description: A flutter boilerplate project created using MobX and Provider.
+description: A flutter project for helper app (UI).
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -27,6 +27,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   flutter_cupertino_localizations: ^1.0.1
+  flutter_switch: ^0.1.4
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -43,10 +44,6 @@ dependencies:
   # flutter packages get
   # flutter packages pub run flutter_launcher_icons:main
   flutter_launcher_icons: ^0.8.1
-    image_path: "assets/icons/saywah_app_icon.png"
-    android: true
-    ios: true
-
   
   # Flogs, a powerful logging framework
   f_logs: ^1.2.2
@@ -98,7 +95,7 @@ dev_dependencies:
       ref: 7c3cbf6
 
 flutter_icons:
-  image_path: "assets/icons/ic_launcher.png"
+  image_path: "assets/icons/saywah_app_icon.png"
   android: true
   ios: true
 
