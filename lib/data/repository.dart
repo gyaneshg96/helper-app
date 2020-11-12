@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:boilerplate/data/local/datasources/post/post_datasource.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
-import 'package:boilerplate/models/post/post.dart';
-import 'package:boilerplate/models/post/post_list.dart';
 import 'package:sembast/sembast.dart';
 
 import 'local/constants/db_constants.dart';
@@ -15,7 +13,7 @@ class Repository {
   //final HelperDataSource _helperDataSource;
 
   // api objects
-  final PostApi _postApi;
+  final HelperApi _postApi;
 
   // shared pref object
   final SharedPreferenceHelper _sharedPrefsHelper;
@@ -24,7 +22,7 @@ class Repository {
   Repository(this._postApi, this._sharedPrefsHelper, this._postDataSource);
 
   // Post: ---------------------------------------------------------------------
-  Future<PostList> getPosts() async {
+  /*Future<PostList> getPosts() async {
     // check to see if posts are present in database, then fetch from database
     // else make a network call to get all posts, store them into database for
     // later use
@@ -73,6 +71,7 @@ class Repository {
       .update(post)
       .then((id) => id)
       .catchError((error) => throw error);
+      */
 
   // Theme: --------------------------------------------------------------------
   Future<void> changeBrightnessToDark(bool value) =>

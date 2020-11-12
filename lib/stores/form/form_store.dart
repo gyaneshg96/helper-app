@@ -208,10 +208,10 @@ abstract class _FormStore with Store {
     List<dynamic> dyn =
         json.decode(await rootBundle.loadString(USERS_JSON))["users"] as List;
     Iterable<User> users = dyn.map((json) => new User(
-        id: int.parse(json["id"]),
+        id: json["id"],
         fullname: json["fullname"],
         phoneNumber: json["phoneNumber"],
-        male: json["male"] == "true",
+        gender: int.parse(json["gender"]),
         password: json["password"]));
     User newuser = new User(
         fullname: fullName, phoneNumber: phoneNumber, password: password);
@@ -225,7 +225,7 @@ abstract class _FormStore with Store {
         id: int.parse(json["id"]),
         fullname: json["fullname"],
         phoneNumber: json["phoneNumber"],
-        male: json["male"] == "true",
+        gender: json["gender"] == "true",
         password: json["password"]));
     for (User user in users) {
       if (user.phoneNumber == phoneNumber) {

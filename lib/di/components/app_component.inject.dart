@@ -27,7 +27,7 @@ class AppComponent$Injector implements _i1.AppComponent {
 
   _i7.RestClient _singletonRestClient;
 
-  _i8.PostApi _singletonPostApi;
+  _i8.HelperApi _singletonPostApi;
 
   _i9.PostDataSource _singletonPostDataSource;
 
@@ -46,7 +46,7 @@ class AppComponent$Injector implements _i1.AppComponent {
   _i10.Repository _createRepository() =>
       _singletonRepository ??= _localModule.provideRepository(_createPostApi(),
           _createSharedPreferenceHelper(), _createPostDataSource());
-  _i8.PostApi _createPostApi() => _singletonPostApi ??=
+  _i8.HelperApi _createPostApi() => _singletonPostApi ??=
       _localModule.providePostApi(_createDioClient(), _createRestClient());
   _i6.DioClient _createDioClient() =>
       _singletonDioClient ??= _localModule.provideDioClient(_createDio());

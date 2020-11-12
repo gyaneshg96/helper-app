@@ -11,22 +11,26 @@ class User extends Person {
   List pastOrder;
   List<String> services;
 
-  User({fullname, phoneNumber, id, male, password})
+  User({fullname, phoneNumber, id, gender, password})
       : this.password = password,
-        super(fullname: fullname, phoneNumber: phoneNumber, id: id, male: male);
+        super(
+            fullname: fullname,
+            phoneNumber: phoneNumber,
+            id: id,
+            gender: gender);
 
   factory User.fromMap(Map<String, dynamic> json) => User(
-      id: int.parse(json["id"]),
+      id: json["id"],
       fullname: json["fullname"],
       phoneNumber: json["phoneNumber"],
-      male: json["male"] == 'true',
+      gender: int.parse(json["gender"]),
       password: json["password"]);
 
   Map<String, dynamic> toMap() => {
         "id": id,
         "fullname": fullname,
         "phoneNumber": phoneNumber,
-        "male": male,
+        "gender": gender,
         "password": password
       };
 }

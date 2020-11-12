@@ -11,18 +11,24 @@ class Helper extends Person {
   List<String> services;
   int currentUsers;
   int totalUsers;
-  List<String> areas;
+  String city;
+  String areas;
 
-  Helper({fullname, phoneNumber, id, male, areas, services})
+  Helper({fullname, phoneNumber, id, gender, areas, services, city})
       : this.areas = areas,
         this.services = services,
-        super(id: id, fullname: fullname, phoneNumber: phoneNumber, male: male);
+        this.city = city,
+        super(
+            id: id,
+            fullname: fullname,
+            phoneNumber: phoneNumber,
+            gender: gender);
 
   factory Helper.fromMap(Map<String, dynamic> json) => Helper(
-      id: int.parse(json["id"]),
+      id: json["id"],
       fullname: json["fullname"],
       phoneNumber: json["phoneNumber"],
-      male: json["male"] == 'true',
+      gender: int.parse(json["gender"]),
       services: List<String>.from(json["services"]),
       areas: List<String>.from(json["areas"]));
 
@@ -30,7 +36,7 @@ class Helper extends Person {
         "id": id,
         "fullname": fullname,
         "phoneNumber": phoneNumber,
-        "male": male,
+        "gender": gender,
         "services": services,
         "areas": areas
       };

@@ -1,6 +1,5 @@
 import 'package:boilerplate/data/local/constants/db_constants.dart';
-import 'package:boilerplate/models/post/post.dart';
-import 'package:boilerplate/models/post/post_list.dart';
+import 'package:boilerplate/models/helper/helper.dart';
 import 'package:sembast/sembast.dart';
 
 class PostDataSource {
@@ -19,7 +18,7 @@ class PostDataSource {
   PostDataSource(this._db);
 
   // DB functions:--------------------------------------------------------------
-  Future<int> insert(Post post) async {
+  Future<int> insert(Helper post) async {
     return await _postsStore.add(await _db, post.toMap());
   }
 
@@ -27,7 +26,7 @@ class PostDataSource {
     return await _postsStore.count(await _db);
   }
 
-  Future<List<Post>> getAllSortedByFilter({List<Filter> filters}) async {
+  Future<List<Helper>> getAllSortedByFilter({List<Filter> filters}) async {
     //creating finder
     final finder = Finder(
         filter: Filter.and(filters),
@@ -40,14 +39,14 @@ class PostDataSource {
 
     // Making a List<Post> out of List<RecordSnapshot>
     return recordSnapshots.map((snapshot) {
-      final post = Post.fromMap(snapshot.value);
+      final post = Helper.fromMap(snapshot.value);
       // An ID is a key of a record from the database.
-      post.id = snapshot.key;
+      //post.id = snapshot.key;
       return post;
     }).toList();
   }
 
-  Future<PostList> getPostsFromDb() async {
+  /*Future<PostList> getPostsFromDb() async {
 
     print('Loading from database');
 
@@ -72,8 +71,8 @@ class PostDataSource {
 
     return postsList;
   }
-
-  Future<int> update(Post post) async {
+*/
+  Future<int> update(Helper post) async {
     // For filtering by key (ID), RegEx, greater than, and many other criteria,
     // we use a Finder.
     final finder = Finder(filter: Filter.byKey(post.id));
@@ -84,7 +83,7 @@ class PostDataSource {
     );
   }
 
-  Future<int> delete(Post post) async {
+  Future<int> delete(Helper post) async {
     final finder = Finder(filter: Filter.byKey(post.id));
     return await _postsStore.delete(
       await _db,
@@ -97,5 +96,4 @@ class PostDataSource {
       await _db,
     );
   }
-
 }

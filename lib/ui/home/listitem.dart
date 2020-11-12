@@ -1,6 +1,7 @@
 import 'package:boilerplate/constants/colors.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class HelperCard extends StatelessWidget {
   const HelperCard({
@@ -10,10 +11,12 @@ class HelperCard extends StatelessWidget {
     this.locations,
     this.press,
     this.roles,
+    this.gender,
   }) : super(key: key);
 
   final String image, name, locations, roles;
   final Function press;
+  final int gender;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +59,7 @@ class HelperCard extends StatelessWidget {
                     child: Image.asset(image,
                         height: 150, width: 100, fit: BoxFit.fitHeight),
                   ),
-                  Spacer(flex: 1),
+                  SizedBox(width: 20),
                   RichText(
                     text: TextSpan(
                       children: [
@@ -74,13 +77,50 @@ class HelperCard extends StatelessWidget {
                     ),
                   ),
                   Spacer(),
-                  Text(
+                  Column(
+                    children: [
+                      /*TextSpan(
+                            text: "M\n",
+                            style: Theme.of(context).textTheme.button),
+                        */
+                      SizedBox(height: 25),
+                      Row(children: [
+                        gender == 0
+                            ? Icon(MdiIcons.genderMale)
+                            : Icon(MdiIcons.genderFemale),
+                      ]),
+                      SizedBox(height: 12),
+                      Text(
+                        "$roles".toUpperCase(),
+                        style: TextStyle(
+                          color: AppColors.greenBlue[500].withOpacity(0.5),
+                        ),
+                      ),
+                    ],
+                  ),
+                  /*RichText(
+                      text: TextSpan(
+                      children: [
+                    TextSpan(
+                      text: male == true ? "M\n" : "F\n",
+                      style: TextStyle(
+                        color: AppColors.greenBlue[500].withOpacity(0.5),
+                      ),
+                    ),
+                    WidgetSpan(child: SizedBox(height: 30)),
+                    TextSpan(
+                      text: "$roles".toUpperCase(),
+                      style: TextStyle(
+                        color: AppColors.greenBlue[500].withOpacity(0.5),
+                      ),
+                    ),
+                    /*Text(
                     '$roles',
                     style: Theme.of(context)
                         .textTheme
                         .button
-                        .copyWith(color: AppColors.greenBlue[500]),
-                  )
+                        .copyWith(color: AppColors.greenBlue[500]),*/
+                  ]))*/
                 ],
               ),
             ),

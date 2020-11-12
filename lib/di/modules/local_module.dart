@@ -75,7 +75,7 @@ class LocalModule extends NetworkModule {
   @provide
   @singleton
   Repository provideRepository(
-    PostApi postApi,
+    HelperApi postApi,
     SharedPreferenceHelper preferenceHelper,
     PostDataSource postDataSource,
   ) =>

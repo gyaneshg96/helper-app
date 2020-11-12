@@ -37,10 +37,16 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
   //stores:---------------------------------------------------------------------
   HelperStore _helperStore;
   Future<List<Helper>> helpers;
+  String selectedCategory;
+  final GlobalKey _scaffoldKey = new GlobalKey();
+  final locationController = TextEditingController();
+  final List<String> categories = ['Cook', 'Housekeep', 'Both'];
+  TabController _tabController;
   //ThemeStore _themeStore;
   //static final Firestore store = Firestore.instance;
 
@@ -58,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
         currentUser = User(fullname: snapshot.data["fullName"]);
       });
     });*/
+    _tabController = new TabController(length: 3, initialIndex: 0, vsync: this);
   }
 
   @override
@@ -73,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
     currentUser = User(fullname: "Sallu");
 
     // currentUser = ModalRoute.of(context).settings.arguments;
-    helpers = _helperStore.getHelpers(currentUser);
+    helpers = _helperStore.getHelpers2("cooks", "btm");
 
     //will fetch username from server or cache
 
@@ -84,10 +91,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     String name = "Guest";
     //String name = currentUser.fullname;
-    final GlobalKey _scaffoldKey = new GlobalKey();
     return Scaffold(
-      key: _scaffoldKey,
+      key: this._scaffoldKey,
       appBar: _buildAppBar(_scaffoldKey),
+      resizeToAvoidBottomPadding: false,
       body: _buildBody(),
       drawer: Dropdown(name),
       /*bottomNavigationBar: BottomAppBar(
@@ -160,15 +167,79 @@ class _HomeScreenState extends State<HomeScreen> {
   // body methods:--------------------------------------------------------------
   Widget _buildBody() {
     Size size = MediaQuery.of(context).size;
+    // String selectedCategory = "Cook";
     return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          HeaderWithSearchBox(size: size),
+          HeaderWithSearchBox(size: size, controller: locationController),
+          _buildTabSelector(categories),
+          //_buildCategorySelector(categories, selectedCategory),
+          SizedBox(
+            height: 10,
+          ),
+          Divider(),
           _buildTitle(),
+          Divider(),
           _buildMainContent(size.height),
-          SizedBox(height: Dimens.default_padding),
         ]);
   }
+
+  Widget _buildTabSelector(List<String> categories) {
+    List<Tab> tabs = List();
+    for (int i = 0; i < categories.length; i++) {
+      tabs.add(_buildSingleTab(i));
+    }
+    return TabBar(
+        indicatorSize: TabBarIndicatorSize.label,
+        controller: _tabController,
+        unselectedLabelColor: AppColors.greenBlue[700],
+        labelColor: AppColors.greenBlue[100],
+        indicator: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [AppColors.greenBlue[400], AppColors.greenBlue[100]]),
+            borderRadius: BorderRadius.circular(50)),
+        tabs: tabs);
+  }
+
+  Widget _buildSingleTab(i) {
+    return Tab(
+      child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(30),
+              border: Border.all(color: AppColors.greenBlue[700], width: 2)),
+          child: Align(
+            alignment: Alignment.center,
+            child: Text(categories[i],
+                style: TextStyle(
+                    fontSize: 15,
+                    color: AppColors.greenBlue[900],
+                    fontWeight: FontWeight.bold)),
+          )),
+    );
+  }
+  /*Widget _buildCategorySelector(categories, selectedCategory) {
+    return Container(
+      height: 35,
+      child: ListView.separated(
+          itemCount: categories.length,
+          shrinkWrap: true,
+          physics: ClampingScrollPhysics(),
+          scrollDirection: Axis.horizontal,
+          separatorBuilder: (BuildContext context, int index) {
+            return SizedBox(
+              width: 10,
+            );
+          },
+          itemBuilder: (context, index) {
+            return CategoryTile(
+              category: categories[index],
+              isSelected: selectedCategory == categories[index],
+              context: this,
+              selectedCategory: selectedCategory,
+            );
+          }),
+    );
+  }*/
 
   Widget _buildTitle() {
     return Padding(
@@ -177,18 +248,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildMainContent(size) {
+    List<Widget> screens = List();
+    for (int i = 0; i < categories.length; i++) {
+      screens.add(_buildScreen(size, i));
+    }
+    return Container(
+        height: size * 0.45,
+        child: TabBarView(controller: _tabController, children: screens));
+  }
+
+  Widget _buildScreen(size, i) {
     return Container(
         height: size * 0.5,
         child: Observer(
           builder: (context) {
             return _helperStore.loading
                 ? CustomProgressIndicatorWidget()
-                : _buildAsyncList();
+                : _buildAsyncList(i);
           },
         ));
   }
 
-  FutureBuilder _buildAsyncList() {
+  FutureBuilder _buildAsyncList(int i) {
+    // helpers = _helperStore.getHelpers2(i, locationController.text);
     return FutureBuilder<List<Helper>>(
       future: helpers,
       builder: (BuildContext context, AsyncSnapshot<List<Helper>> snapshot) {
@@ -234,7 +316,8 @@ class _HomeScreenState extends State<HomeScreen> {
       Helper newhelper = new Helper();
       newhelper.fullname = helper['fullname'];
       newhelper.phoneNumber = helper['phoneNumber'];
-      newhelper.areas = List<String>.from(helper['areas']);
+      // newhelper.areas = List<String>.from(helper['areas']);
+      newhelper.areas = helper['areas'];
       newhelper.services = List<String>.from(helper['services']);
       helper = newhelper;
     }
@@ -242,8 +325,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return HelperCard(
         image: "assets/images/test_pic.jpg",
         name: helper.fullname,
-        locations: helper.areas.join(','),
+        // locations: helper.areas.join(','),
+        locations: helper.areas,
         roles: helper.services.join(','),
+        gender: helper.gender,
         press: () {
           Navigator.pushNamed(context, Routes.helperProfile, arguments: helper);
         });

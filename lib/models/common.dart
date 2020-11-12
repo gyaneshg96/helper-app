@@ -1,8 +1,8 @@
 class Person {
   String fullname;
-  int id;
+  String id;
   String phoneNumber;
-  bool male;
+  int gender;
   Address address;
   DateTime joining;
 
@@ -10,9 +10,15 @@ class Person {
       {this.fullname,
       this.phoneNumber,
       this.id,
-      this.male,
+      this.gender,
       this.address,
       this.joining});
+
+  /*generateId() {
+    Uuid uuid = Uuid();
+    String a = uuid.v4();
+    print(a);
+  }*/
 }
 
 class Address {
@@ -26,7 +32,11 @@ class Address {
 }
 
 class Ratings {
-  List list = new List(5);
+  List list;
+
+  Ratings(list) {
+    this.list = list;
+  }
 
   double getTotalRating() {
     int i, users = 0;

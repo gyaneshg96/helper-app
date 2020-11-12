@@ -76,8 +76,8 @@ class NetworkModule extends PreferenceModule {
   /// Calling it multiple times will return the same instance.
   @provide
   @singleton
-  PostApi providePostApi(DioClient dioClient, RestClient restClient) =>
-      PostApi(dioClient, restClient);
+  HelperApi providePostApi(DioClient dioClient, RestClient restClient) =>
+      HelperApi(dioClient, restClient);
 // Api Providers End:---------------------------------------------------------
 
 }
