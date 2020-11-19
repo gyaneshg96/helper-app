@@ -23,6 +23,7 @@
   "home_end": "-------------------------------------------------------------------------------------",
   
 
-  "home_tv_no_helper_found": "You don't have any helper"
+  "home_tv_no_helper_found": "No matching helper found",
+  "server_error": "Server not found"
 
 }
